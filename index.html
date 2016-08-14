@@ -13,10 +13,6 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="蔡目浩的博客">
   
-    <link rel="alternative" href="/atom.xml" title="蔡目浩的博客" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
   
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -29,7 +25,7 @@
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
 			
-			<img src="/img/conan-paper-small.png" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
+			<img src="/undefined" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
 			
 		</a>
 
@@ -40,32 +36,6 @@
 		
 
 		
-			<div class="switch-btn">
-				<div class="icon">
-					<div class="icon-ctn">
-						<div class="icon-wrap icon-house" data-idx="0">
-							<div class="birdhouse"></div>
-							<div class="birdhouse_holes"></div>
-						</div>
-						<div class="icon-wrap icon-ribbon hide" data-idx="1">
-							<div class="ribbon"></div>
-						</div>
-						
-						
-					</div>
-					
-				</div>
-				<div class="tips-box hide">
-					<div class="tips-arrow"></div>
-					<ul class="tips-inner">
-						<li>Menu</li>
-						<li>Tags</li>
-						
-						
-					</ul>
-				</div>
-			</div>
-		
 
 		<div class="switch-area">
 			<div class="switch-wrap">
@@ -73,33 +43,15 @@
 					<nav class="header-menu">
 						<ul>
 						
-							<li><a href="/">主页</a></li>
-				        
-							<li><a href="/archives">所有文章</a></li>
-				        
 						</ul>
 					</nav>
 					<nav class="header-nav">
 						<div class="social">
 							
-								<a class="github" target="_blank" href="#" title="github">github</a>
-					        
-								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
-					        
-								<a class="rss" target="_blank" href="#" title="rss">rss</a>
-					        
-								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-					        
 						</div>
 					</nav>
 				</section>
 				
-				
-				<section class="switch-part switch-part2">
-					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/点滴记忆/" style="font-size: 10px;">点滴记忆</a>
-					</div>
-				</section>
 				
 				
 				
@@ -121,7 +73,7 @@
 		<header id="header" class="inner">
 			<div class="profilepic">
 				
-					<img src="/img/conan-paper-small.png" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
+					<img src="/undefined" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
 				
 			</div>
 			<hgroup>
@@ -131,24 +83,12 @@
 			<nav class="header-menu">
 				<ul>
 				
-					<li><a href="/">主页</a></li>
-		        
-					<li><a href="/archives">所有文章</a></li>
-		        
 		        <div class="clearfix"></div>
 				</ul>
 			</nav>
 			<nav class="header-nav">
 				<div class="social">
 					
-						<a class="github" target="_blank" href="#" title="github">github</a>
-			        
-						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
-			        
-						<a class="rss" target="_blank" href="#" title="rss">rss</a>
-			        
-						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
-			        
 				</div>
 			</nav>
 		</header>				
@@ -156,6 +96,67 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-View.Post" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/14/View.Post/" class="article-date">
+  	<time datetime="2016-08-14T15:16:57.643Z" itemprop="datePublished">2016-08-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/14/View.Post/">View.Post()的使用细节</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.</p>
+</blockquote>
+<p>在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post方法,在Runnable中进行处理.</p>
+<p>在Android应用运行的时候会调用ActivityThread中的main方法,在该方法中创建主线程的Looper和系统级别的Handler,而在post方法中首先做了一个判断attachInfo不为空则调用他的Handler处理任务,否则就将他添加到ViewRootInpl的RunQueue中.</p>
+<p>Android中所有的视图都是通过Window来呈现的，不管是Activity、Dialog还是Toast和Snackbar,他们的视图其实都是附着于Window，所以管理View的最终是Wondow。查看源码，我们发现attachinfo的赋值只有一处：dispatchAttachedToWindow方法。也就是说，View在和Window连接的时候，得到了一系列的信息，其中就包括对系统级的Handler的引用。所以调用view的post方法，其实就是发送了一个任务到MessageQueue的队尾。前面也说了，由于Android的消息驱动机制，View的layout，draw等过程都有涉及。</p>
+<p>当给一个隐藏的控件 做显示 执行动画的时,直接设置动画效果会失效,可以通过调用post在Runnable中对View执行动画</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Smile" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -166,8 +167,6 @@
     </div>
   
   <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
     
     
       <header class="article-header">
@@ -222,8 +221,6 @@
     </div>
   
   <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
     
     
       <header class="article-header">
@@ -290,20 +287,18 @@
 </footer>
     </div>
     
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
 
 <script>
 	var yiliaConfig = {
-		fancybox: true,
-		mathjax: true,
-		animate: false,
+		fancybox: undefined,
+		mathjax: undefined,
+		animate: undefined,
 		isHome: true,
 		isPost: false,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
-		open_in_new: false,
+		open_in_new: undefined,
 		root: ''
 		
 	}
@@ -315,27 +310,6 @@
 
 
 
-
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    }
-});
-
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';                 
-    }       
-});
-</script>
-
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
 
 
   </div>
