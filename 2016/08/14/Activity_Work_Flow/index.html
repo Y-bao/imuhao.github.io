@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Muhao&#39;s Blog</title>
+  <title>Activity的工作过程 | Muhao&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="##Activity的工作过程
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法
-public ActivityResult execStartActivity(Context who, IBinder conte">
+  <meta name="description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Muhao's Blog">
+<meta property="og:title" content="Activity的工作过程">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/index.html">
 <meta property="og:site_name" content="Muhao's Blog">
-<meta property="og:description" content="##Activity的工作过程
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法
-public ActivityResult execStartActivity(Context who, IBinder conte">
-<meta property="og:updated_time" content="2016-08-14T16:37:52.959Z">
+<meta property="og:description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
+<meta property="og:updated_time" content="2016-08-14T16:44:30.255Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Muhao's Blog">
-<meta name="twitter:description" content="##Activity的工作过程
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法
-public ActivityResult execStartActivity(Context who, IBinder conte">
+<meta name="twitter:title" content="Activity的工作过程">
+<meta name="twitter:description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
   
     <link rel="alternative" href="/atom.xml" title="Muhao&#39;s Blog" type="application/atom+xml">
   
@@ -107,7 +107,7 @@ public ActivityResult execStartActivity(Context who, IBinder conte">
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Android笔记/" style="font-size: 10px;">Android笔记</a> <a href="/tags/点滴记忆/" style="font-size: 10px;">点滴记忆</a>
+						<a href="/tags/Android笔记/" style="font-size: 20px;">Android笔记</a> <a href="/tags/点滴记忆/" style="font-size: 10px;">点滴记忆</a>
 					</div>
 				</section>
 				
@@ -178,9 +178,33 @@ public ActivityResult execStartActivity(Context who, IBinder conte">
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Activity的工作过程
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>##Activity的工作过程</p>
+        <blockquote>
+<p> Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?</p>
+</blockquote>
 <p>从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法</p>
 <pre><code>public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
        Intent intent, int requestCode, Bundle options)
@@ -259,7 +283,7 @@ newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Activity_Work_Flow" data-title="" data-url="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/"></div>
+	<div class="ds-thread" data-thread-key="Activity_Work_Flow" data-title="Activity的工作过程" data-url="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
