@@ -6,22 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>Activity的工作过程 | Muhao&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+  <meta name="description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
 
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
+首先来看一下流程图:
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Activity的工作过程">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/index.html">
 <meta property="og:site_name" content="Muhao's Blog">
-<meta property="og:description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+<meta property="og:description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
 
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
-<meta property="og:updated_time" content="2016-08-14T16:44:30.255Z">
+首先来看一下流程图:
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
+<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_activity.png">
+<meta property="og:updated_time" content="2016-08-15T13:13:59.698Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity的工作过程">
-<meta name="twitter:description" content="Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
+<meta name="twitter:description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
 
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方">
+首先来看一下流程图:
+
+从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
+<meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_activity.png">
   
     <link rel="alternative" href="/atom.xml" title="Muhao&#39;s Blog" type="application/atom+xml">
   
@@ -199,8 +207,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p> Activity对于开发者来说最普通不过了,但是你又没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?</p>
+<p> Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?</p>
 </blockquote>
+<p>首先来看一下流程图:</p>
+<p><img src="http://imuhao.qiniudn.com/androidart_activity.png" alt="img"></p>
 <p>从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法</p>
 <pre><code>public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
        Intent intent, int requestCode, Bundle options)
@@ -241,6 +251,15 @@ newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
   
     
 <nav id="article-nav">
+  
+    <a href="/2016/08/15/Service_Work_Flow/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Service的工作过程
+        
+      </div>
+    </a>
   
   
     <a href="/2016/08/14/View-Post/" id="article-nav-older" class="article-nav-link-wrap">
