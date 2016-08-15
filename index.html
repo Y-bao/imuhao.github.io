@@ -179,7 +179,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,
+        <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识
 比如Service的启动过程和绑定过程.
 </code></pre><h3 id="Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的"><a href="#Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的" class="headerlink" title="Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的."></a>Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.</h3><h2 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h2><p>启动过程流程图</p>
 <p><img src="http://imuhao.qiniudn.com/androidart_service1.png" alt="img"></p>
@@ -194,19 +194,19 @@
 <p>handlerCreateService方法主要做了这几件事</p>
 <ol>
 <li>首先通过类加载器创建Service的实例</li>
-<li>创建Application对象并调用期onCreate方法.创建过程只会有一次</li>
+<li>创建Application对象并调用其onCreate方法.创建过程只会有一次</li>
 <li>创建ConTextImpl对象并通过Service的attach方法建立二者的关系.</li>
 <li>最后调用Service的onCreate方法并将Service对象存储到ActivityThread中的一个列表中.</li>
 </ol>
 <p>到这里Service的启动过程已经分析完了,下面分析Service的绑定过程.</p>
-<h2 id="Service的绑定过程"><a href="#Service的绑定过程" class="headerlink" title="Service的绑定过程"></a>Service的绑定过程</h2><p>绑定流程图</p>
-<p>和Service启动过程一样,它的绑定过程也是从ContextWrapper开始的,如下所示.</p>
+<h2 id="Service的绑定过程"><a href="#Service的绑定过程" class="headerlink" title="Service的绑定过程"></a>Service的绑定过程</h2><p>绑定流程图<br><img src="http://imuhao.qiniudn.com/androidart_service2.png" alt="img"><br>和Service启动过程一样,它的绑定过程也是从ContextWrapper开始的,如下所示.</p>
 <pre><code>public boolean bindService(Intent service, ServiceConnection conn,
            int flags) {
        return mBase.bindService(service, conn, flags);
    }
 </code></pre><p>mBase同样是ContextImpl类型的对象,mBase的bindService方法最终会调用自己的bindServiceCommon方法</p>
-<p>bindServiceCommon方法主要完成如下两件事:<br><img src="http://imuhao.qiniudn.com/androidart_service2.png" alt="img"><br>首先将客户端的ServiceConnection对象转化为ServiceDispatcher.IServiceConnection对象.之所以不能使用ServiceConnection对象是因为服务的绑定可能是跨进成的,因此ServiceConnection对象必须借助与Binder才能让远程服务端回调自己的方法,而ServiceDispatcher的内部类IServiceConnection刚好充当了Binder这个角色.ServiceConnection起着连接SercviceConnection和InnerConnection的作用,这个过程由LoadedApk的getServiceDispatcher方法来完成</p>
+<p>bindServiceCommon方法主要完成如下两件事:</p>
+<p>首先将客户端的ServiceConnection对象转化为ServiceDispatcher.IServiceConnection对象.之所以不能使用ServiceConnection对象是因为服务的绑定可能是跨进成的,因此ServiceConnection对象必须借助与Binder才能让远程服务端回调自己的方法,而ServiceDispatcher的内部类IServiceConnection刚好充当了Binder这个角色.ServiceConnection起着连接SercviceConnection和InnerConnection的作用,这个过程由LoadedApk的getServiceDispatcher方法来完成</p>
 <pre><code>public final IServiceConnection getServiceDispatcher(ServiceConnection c,
         Context context, Handler handler, int flags) {
     synchronized (mServices) {
@@ -230,7 +230,7 @@
 }
 </code></pre><p>在上面的代码中mServices是一个ArrayMap,它存储了一个应用当前活动的ServiceConnection和ServiceDispatcher的映射关系,它的定义如下:</p>
 <pre><code>private final ArrayMap&lt;Context, ArrayMap&lt;ServiceConnection, LoadedApk.ServiceDispatcher&gt;&gt; mServices
-</code></pre><p>接着bindServiceCommon方法会通过AMS完成Service的具体绑定过程.对应着AMS的binService方法,而该方法在调用bindServiceLocked方法,bindServiceLocked方法又会调用bringUpServiceLocked方法,bringUpServiceLocked又会调用realStartServiceLocked方法,realStartServiceLocked的执行逻辑和启动的逻辑类似,尊重都是通过ApplicationThread来完成Service的创建并执行onCreate方法</p>
+</code></pre><p>接着bindServiceCommon方法会通过AMS完成Service的具体绑定过程.对应着AMS的binService方法,而该方法在调用bindServiceLocked方法,bindServiceLocked方法又会调用bringUpServiceLocked方法,bringUpServiceLocked又会调用realStartServiceLocked方法,realStartServiceLocked的执行逻辑和启动的逻辑类似,都是通过ApplicationThread来完成Service的创建并执行onCreate方法</p>
 <p>和启动Service不同的是,Service的绑定过程会调用app.thread的scheduleBindService方法,这个过程的实现在ActivityService的requestServiceBindingLocked方法,在该方法中调用了app.thread的scheduleBindService方法,他的内部都是通过Handler H中转的.</p>
 <p>在H内部接收到BIND_SERVICE这类消息时,会交给ActivityThread’的handleBind-Service方法来处理.在该方法中会根据Service的token取出Service对象,然后调用onBind方法.onBind方法会返回一个Binder对象给客户端使用.原则上此时已经属于绑定状态了,但是onBind方法是Service的方法,这个时候客户端并不知道已经成功连接了,所以还必须调用客户端的ServiceConnection中的onServiceConected,这个过程由ActivityManagerNative.getDefault()的publishService方法来完成的.他其实就是AMS.</p>
 <p>而AMS的publishService方法将具体的工作交给了ActivityServices类型的mServices对象来处理.在ActiveServices的publishServiceLocked方法核心代码只有一句</p>
