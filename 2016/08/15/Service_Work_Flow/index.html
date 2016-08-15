@@ -6,30 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>Service的工作过程 | Muhao&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,比如Service的启动过程和绑定过程.
-###Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.
-Service的启动过程启动过程流程图
+  <meta name="description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,
+比如Service的启动过程和绑定过程.
+Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.Service的启动过程启动过程流程图
 
-Service的启动过程从ContextWrapper的startSe">
+Service的启动过程从ContextWrapper的startServi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Service的工作过程">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/15/Service_Work_Flow/index.html">
 <meta property="og:site_name" content="Muhao's Blog">
-<meta property="og:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,比如Service的启动过程和绑定过程.
-###Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.
-Service的启动过程启动过程流程图
+<meta property="og:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,
+比如Service的启动过程和绑定过程.
+Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.Service的启动过程启动过程流程图
 
-Service的启动过程从ContextWrapper的startSe">
+Service的启动过程从ContextWrapper的startServi">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service1.png">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service2.png">
-<meta property="og:updated_time" content="2016-08-15T13:16:00.742Z">
+<meta property="og:updated_time" content="2016-08-15T13:17:14.236Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Service的工作过程">
-<meta name="twitter:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,比如Service的启动过程和绑定过程.
-###Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.
-Service的启动过程启动过程流程图
+<meta name="twitter:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,
+比如Service的启动过程和绑定过程.
+Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.Service的启动过程启动过程流程图
 
-Service的启动过程从ContextWrapper的startSe">
+Service的启动过程从ContextWrapper的startServi">
 <meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_service1.png">
   
     <link rel="alternative" href="/atom.xml" title="Muhao&#39;s Blog" type="application/atom+xml">
@@ -207,9 +207,9 @@ Service的启动过程从ContextWrapper的startSe">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,比如Service的启动过程和绑定过程.
-</code></pre><p>###Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.</p>
-<h2 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h2><p>启动过程流程图</p>
+        <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识,
+比如Service的启动过程和绑定过程.
+</code></pre><h3 id="Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的"><a href="#Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的" class="headerlink" title="Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的."></a>Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.</h3><h2 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h2><p>启动过程流程图</p>
 <p><img src="http://imuhao.qiniudn.com/androidart_service1.png" alt="img"></p>
 <p>Service的启动过程从ContextWrapper的startService方法开始,如下所示</p>
 <pre><code>public ComponentName startService(Intent service) {
