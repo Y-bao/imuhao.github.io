@@ -153,6 +153,258 @@
 
       <div class="body-wrap">
   
+    <article id="post-Broadcast_Work_Flow" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/16/Broadcast_Work_Flow/" class="article-date">
+  	<time datetime="2016-08-15T16:09:47.669Z" itemprop="datePublished">2016-08-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/16/Broadcast_Work_Flow/">BroadcastReceiver的工作过程</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p> 本文将介绍BroadcastReceiver的工作过程,主要包含两个方面的内容，一个是广播的注册过程，一个是广播的发送和接受过程。</p>
+</blockquote>
+<h2 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h2><p>首先看下流程图：</p>
+<p><img src="http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png"></p>
+<p>广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。<br>这里只分析广播的动态注册，动态注册过程是从ContextWrapper的registerReceiver方法开始的，ContextWrapper并没有实际工作，而是将注册交给了ContextImpl来完成。</p>
+<pre><code>public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+    return registerReceiver(receiver, filter, null, null);
+}
+</code></pre><p>ContextImpl调用自己的registerReceiverInternal方法</p>
+<pre><code>private Intent registerReceiverInternal(BroadcastReceiver receiver, int userId,
+            IntentFilter filter, String broadcastPermission,
+            Handler scheduler, Context context) {
+        IIntentReceiver rd = null;
+        if (receiver != null) {
+            if (mPackageInfo != null &amp;&amp; context != null) {
+                if (scheduler == null) {
+                    scheduler = mMainThread.getHandler();
+                }
+                rd = mPackageInfo.getReceiverDispatcher(
+                    receiver, context, scheduler,
+                    mMainThread.getInstrumentation(), true);
+            } else {
+                if (scheduler == null) {
+                    scheduler = mMainThread.getHandler();
+                }
+                rd = new LoadedApk.ReceiverDispatcher(
+                        receiver, context, scheduler, null, true).getIIntentReceiver();
+            }
+        }
+        try {
+            return ActivityManagerNative.getDefault().registerReceiver(
+                    mMainThread.getApplicationThread(), mBasePackageName,
+                    rd, filter, broadcastPermission, userId);
+        } catch (RemoteException e) {
+            return null;
+        }
+    }
+</code></pre><p>在上面代码中系统从mPackageInfo中获取IIntentReceiver对象，然后采用跨进成的方式向AMS发送广播注册的请求，之所以采用IIntentReceiver是因为注册是一个进程间通信的过程，IIntentReceiver是一个Binder接口，他的具体实现是LoadedApk.ReceiverDispatcher内部类，该内部类同时保存了BroadcastReceivr和InnerReceiver，这样当接受到广播时，ReceiverDispatcher可以很方便的调用广播的onReceiver方法。</p>
+<p>广播的真正实现过程是在AMS中的，AMS的registerReceiver的关键只有下面一部分，最终会把远程的InnerReceiver对象以及IntentFilter对象存储起来。</p>
+<pre><code>public Intent registerReceiver(IApplicationThread caller, String callerPackage,IIntentReceiver receiver, 、
+IntentFilter filter, String permission, int userId) 
+
+mRegisteredReceivers.put(receiver.asBinder(), rl);
+BroadcastFilter bf = new BroadcastFilter(filter, rl, callerPackage,
+                permission, callingUid, userId);
+ rl.add(bf);
+        if (!bf.debugCheck()) {
+            Slog.w(TAG, &quot;==&gt; For Dynamic broadcast&quot;);
+        }
+</code></pre><p>这样整个广播的注册过程就完成了。</p>
+<h2 id="广播的发送和接受过程"><a href="#广播的发送和接受过程" class="headerlink" title="广播的发送和接受过程"></a>广播的发送和接受过程</h2><p>流程图：</p>
+<p><img src="http://imuhao.qiniudn.com/androidart_broadcastreceiver2.png"></p>
+<p>当通过send方法来发送广播时，AMS会查找出匹配的广播接受者并将广播发送给他们处理。<br>广播发送有几种类型：普通广播、有序广播、粘性广播。这里只分析普通广播的实现。</p>
+<p>广播的发送开始于ContextImpl的sendBroadcast，源码如下：</p>
+<pre><code>public void sendBroadcast(Intent intent) {
+    warnIfCallingFromSystemProcess();
+    String resolvedType = intent.resolveTypeIfNeeded(getContentResolver());
+    try {
+        intent.prepareToLeaveProcess();
+        ActivityManagerNative.getDefault().broadcastIntent(
+                mMainThread.getApplicationThread(), intent, resolvedType, null,
+                Activity.RESULT_OK, null, null, null, AppOpsManager.OP_NONE, null, false, false,
+                getUserId());
+    } catch (RemoteException e) {
+        throw new RuntimeException(&quot;Failure from system&quot;, e);
+    }
+}
+</code></pre><p>ContextImpl几乎什么都没干，直接向AMS发起一个异步请求发送广播。下面是AMS对广播发送过程的处理。AMS的broadcastIntent的方法源码如下：</p>
+<pre><code>public final int broadcastIntent(IApplicationThread caller,Intent intent, String resolvedType, IIntentReceiver resultTo,int resultCode, String resultData, Bundle resultExtras,String[] requiredPermissions, int appOp, Bundle options, boolean serialized, boolean sticky, int userId) {
+
+    enforceNotIsolatedCaller(&quot;broadcastIntent&quot;);
+    synchronized(this) {
+        intent = verifyBroadcastLocked(intent);
+
+        final ProcessRecord callerApp = getRecordForAppLocked(caller);
+        final int callingPid = Binder.getCallingPid();
+        final int callingUid = Binder.getCallingUid();
+        final long origId = Binder.clearCallingIdentity();
+        int res = broadcastIntentLocked(callerApp,
+                callerApp != null ? callerApp.info.packageName : null,
+                intent, resolvedType, resultTo, resultCode, resultData, resultExtras,
+                requiredPermissions, appOp, null, serialized, sticky,
+                callingPid, callingUid, userId);
+        Binder.restoreCallingIdentity(origId);
+        return res;
+    }
+    }
+</code></pre><p>broadcastIntent方法又调用了broadcastIntentLocked方法。该方法的开始有这一行代码：</p>
+<pre><code>// By default broadcasts do not go to stopped apps.
+   intent.addFlags(Intent.FLAG_EXCLUDE_STOPPED_PACKAGES);
+</code></pre><p>这表示广播不会发送给已经停止的我应用，从Android3.1开始已经具有这种特性，这是因为在Android3.1中为Intent添加了两个标记，分别是FLAG_EXCLUDE_STOPPED_PACKAGES和FLAG_EXCLUDE_STOPPED_PACKAGES用来控制广播是否对停止应用起作用。</p>
+<ul>
+<li>FLAG <em> INCLUDE </em> STOPPED _ PACKAGES</li>
+</ul>
+<p>表示包含已经停止的应用，这个时候广播会发送给已经停止的应用</p>
+<ul>
+<li>FLAG <em> EXCLUDE </em> STOPPED _ PACKAGES</li>
+</ul>
+<p>表示不包含已经停止的应用，这个时候广播不会发送给已经停止的应用。</p>
+<p>从3.1开始默认为所有广播添加了FLAG <em> EXCLUDE </em> STOPPED _ PACKAGES标志。</p>
+<p>处于停止状态分为两种情形：</p>
+<ol>
+<li>应用安装后未运行</li>
+<li>应用被手动或其他应用强停。</li>
+</ol>
+<p>从Android3.1开始处于停止状态的应用同样无法接收到开机广播。</p>
+<p>在broadcastIntentLocked内部会根据intentfilter查找匹配的广播接受者，将满足条件的广播添加到BroadcastQueue中。</p>
+<pre><code>if ((receivers != null &amp;&amp; receivers.size() &gt; 0)
+                || resultTo != null) {
+            BroadcastQueue queue = broadcastQueueForIntent(intent);
+            BroadcastRecord r = new BroadcastRecord(queue, intent, callerApp,
+                    callerPackage, callingPid, callingUid, resolvedType,
+                    requiredPermissions, appOp, brOptions, receivers, resultTo, resultCode,
+                    resultData, resultExtras, ordered, sticky, false, userId);
+
+            if (DEBUG_BROADCAST) Slog.v(TAG_BROADCAST, &quot;Enqueueing ordered broadcast &quot; + r
+                    + &quot;: prev had &quot; + queue.mOrderedBroadcasts.size());
+            if (DEBUG_BROADCAST) Slog.i(TAG_BROADCAST,
+                    &quot;Enqueueing broadcast &quot; + r.intent.getAction());
+
+            boolean replaced = replacePending &amp;&amp; queue.replaceOrderedBroadcastLocked(r);
+            if (!replaced) {
+                queue.enqueueOrderedBroadcastLocked(r);
+                queue.scheduleBroadcastsLocked();
+            }
+        }
+</code></pre><p>接着我们来看BroadcastQueue的scheduleBroadcastsLocked方法实现。</p>
+<pre><code>public void scheduleBroadcastsLocked() {
+       if (mBroadcastsScheduled) {
+           return;
+       }
+       mHandler.sendMessage(mHandler.obtainMessage(BROADCAST_INTENT_MSG, this));
+       mBroadcastsScheduled = true;
+   }
+</code></pre><p>该方法并没有立即发送广播，而是发送了一个BROADCAST_INTENT_MSG类型的消息。当BroadcastQueue收到消息之后会调用processNextBroadcast方法。该方法对普通广播的处理如下：</p>
+<pre><code>while (mParallelBroadcasts.size() &gt; 0) {
+    r = mParallelBroadcasts.remove(0);
+    r.dispatchTime = SystemClock.uptimeMillis();
+    r.dispatchClockTime = System.currentTimeMillis();
+    final int N = r.receivers.size();
+    if (DEBUG_BROADCAST_LIGHT) Slog.v(TAG_BROADCAST, &quot;Processing parallel broadcast [&quot;
+            + mQueueName + &quot;] &quot; + r);
+    for (int i=0; i&lt;N; i++) {
+        Object target = r.receivers.get(i);
+        if (DEBUG_BROADCAST)  Slog.v(TAG_BROADCAST,
+                &quot;Delivering non-ordered on [&quot; + mQueueName + &quot;] to registered &quot;
+                + target + &quot;: &quot; + r);
+        deliverToRegisteredReceiverLocked(r, (BroadcastFilter)target, false);
+    }
+    addBroadcastToHistoryLocked(r);
+    if (DEBUG_BROADCAST_LIGHT) Slog.v(TAG_BROADCAST, &quot;Done with parallel broadcast [&quot;
+            + mQueueName + &quot;] &quot; + r);
+}
+</code></pre><p>可以看到无序广播存储在mParallelBroadcasts中，系统会遍历该集合并发送给他们的处理者，具体的发送过程是通过deliverToRegisteredReceiverLocked方法来实现，该方法将一个广播发送给一个特定的接受者，它的内部调用了performReceiveLocked方法来完成具体的发送过程，实现如下，由于广播会调起应用程序，因此app.thread不为空app.thread指ApplicationThread。</p>
+<pre><code>private static void performReceiveLocked(ProcessRecord app, IIntentReceiver receiver,
+        Intent intent, int resultCode, String data, Bundle extras,
+        boolean ordered, boolean sticky, int sendingUser) throws RemoteException {
+    // Send the intent to the receiver asynchronously using one-way binder calls.
+    if (app != null) {
+        if (app.thread != null) {
+            // If we have an app thread, do the call through that so it is
+            // correctly ordered with other one-way calls.
+            app.thread.scheduleRegisteredReceiver(receiver, intent, resultCode,
+                    data, extras, ordered, sticky, sendingUser, app.repProcState);
+        } else {
+            // Application has died. Receiver doesn&apos;t exist.
+            throw new RemoteException(&quot;app.thread must not be null&quot;);
+        }
+    } else {
+        receiver.performReceive(intent, resultCode, data, extras, ordered,
+                sticky, sendingUser);
+    }
+}
+</code></pre><p>该方法会调用ApplicationThread的scheduleRegisteredReceiver，他的实现比较简单，通过InnerReceiver来实现广播的接受。InnerReceiver的performRecerver方法会调用LoadedApk.ReceiverDispatcher的performReceive方法。</p>
+<pre><code>    public void performReceive(Intent intent, int resultCode, String data,
+            Bundle extras, boolean ordered, boolean sticky, int sendingUser) {
+        Args args = new Args(intent, resultCode, data, extras, ordered,
+                sticky, sendingUser);
+        if (!mActivityThread.post(args)) {
+            if (mRegistered &amp;&amp; ordered) {
+                IActivityManager mgr = ActivityManagerNative.getDefault();
+                if (ActivityThread.DEBUG_BROADCAST) Slog.i(ActivityThread.TAG,
+                        &quot;Finishing sync broadcast to &quot; + mReceiver);
+                args.sendFinished(mgr);
+            }
+        }
+    }
+
+}
+</code></pre><p>在上面代码中会创建一个Args对象并通过mActivityThread的post方法来执行args中的逻辑，而args实现了Runnable接口。mActivityThread是一个Handler，它其实就是ActivityThread中的mH，mH的类型是ActivityThread的内部类H。在args的run方法中有如下几行代码：</p>
+<pre><code>final BroadcastReceiver receiver = mReceiver;
+receiver.setPendingResult(this);
+receiver.onReceive(mContext, intent);
+</code></pre><p>很显然这个时候BroadcastReceiver的onReceiver方法被执行了，也就是说应用已经接收到广播。</p>
+<p>到这里这个广播的注册，发送和接受过程已经分析完了，读者应该对广播的整个过程有了一定的理解。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Service_Work_Flow" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
