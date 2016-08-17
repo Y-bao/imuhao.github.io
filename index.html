@@ -153,6 +153,226 @@
 
       <div class="body-wrap">
   
+    <article id="post-ContentProvider_Work_Flow" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/17/ContentProvider_Work_Flow/" class="article-date">
+  	<time datetime="2016-08-17T06:31:36.413Z" itemprop="datePublished">2016-08-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/17/ContentProvider_Work_Flow/">Service的工作过程</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>ContentProvider是一种内容共享性组建，它通过Binder向其他组件乃至其他应用提供数据。</p>
+</blockquote>
+<p>首先来看一下流程图：</p>
+<p><img src="http://imuhao.qiniudn.com/androidart_contentprovider.png"></p>
+<p>一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplication方法并将ApplicationThread对象提供给AMS，ApplicationThread是一个Binder对象，它的接口是IApplicattionThread，它主要用于ActivityThread和AMS之间通信。</p>
+<p>访问ContentProvider需要通过ContentResolver，它是一个抽象类，通过Context的getContentResolver方法获取的实际上是ApplicationContentResolver对象，该类继承了ContentResolver并实现了ContentResolver中的抽象方法。通过ContentProvider的四个方法中任何一个都可以触发ContentProvider的启动。这里选择query方法。</p>
+<p>ContentProvider的query方法首先会获取IContentProvider对象，最终会通过ApplicationContentResolver的acquireProvider方法，该方法没有做任何逻辑，直接调用了ActivityThread的acquireExistingProvider方法</p>
+<pre><code>public final IContentProvider acquireProvider(
+        Context c, String auth, int userId, boolean stable) {
+    final IContentProvider provider = acquireExistingProvider(c, auth, userId, stable);
+    if (provider != null) {
+        return provider;
+    }
+    IActivityManager.ContentProviderHolder holder = null;
+    try {
+        holder = ActivityManagerNative.getDefault().getContentProvider(
+                getApplicationThread(), auth, userId, stable);
+    } catch (RemoteException ex) {
+    }
+    if (holder == null) {
+        Slog.e(TAG, &quot;Failed to find provider info for &quot; + auth);
+        return null;
+    }
+
+    // Install provider will increment the reference count for us, and break
+    // any ties in the race.
+    holder = installProvider(c, holder, holder.info,
+            true /*noisy*/, holder.noReleaseNeeded, stable);
+    return holder.provider;
+}
+</code></pre><p>上面代码中首先会从ActivityThread中查找是否已经存在ContentProvider，如果存在就直接返回，ActivityThread中通过mProviderMap来存储已经启动的ContentProvider对象，该容器的声明如下：</p>
+<pre><code>final ArrayMap&lt;ProviderKey, ProviderClientRecord&gt; mProviderMap= new ArrayMap&lt;ProviderKey, ProviderClientRecord&gt;();
+</code></pre><p>如果不存在就发送一个进程间请求给AMS让其启动，再通过installProvider方法来修改引用计数。<br>AMS是通过startProcessLocked方法来完成进程的启动，内部主要通过Process的start方法来完成进程的启动，新进程启动后的入口方法为ActivityThread的main方法：</p>
+<pre><code>public static void main(String[] args) {
+
+       ActivityThread thread = new ActivityThread();
+       thread.attach(false);
+
+       if (sMainThreadHandler == null) {
+           sMainThreadHandler = thread.getHandler();
+       }
+
+       if (false) {
+           Looper.myLooper().setMessageLogging(new
+                   LogPrinter(Log.DEBUG, &quot;ActivityThread&quot;));
+       }
+
+       // End of event ActivityThreadMain.
+       Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+       Looper.loop();
+
+       throw new RuntimeException(&quot;Main thread loop unexpectedly exited&quot;);
+   }
+</code></pre><p>在该方法中首先会调用ActivityThread的实例并调用attach方法进行初始化，然后进行消息循环，attach方法会将ApplicationThread对象通过AMS的attachApplication方法跨进程传给AMS，最终完成Contentprovider的创建。</p>
+<pre><code>try {
+                mgr.releaseSomeActivities(mAppThread);
+            } catch (RemoteException e) {
+            }
+</code></pre><p>APS的attachApplication方法调用了attachApplicationLocked方法，该方法又调用了ApplicationThread的bindApplication方法</p>
+<pre><code>thread.bindApplication(processName, appInfo, providers, app.instrumentationClass,
+        profilerInfo, app.instrumentationArguments, app.instrumentationWatcher,
+        app.instrumentationUiAutomationConnection, testMode, enableOpenGlTrace,
+        isRestrictedBackupMode || !normalMode, app.persistent,
+        new Configuration(mConfiguration), app.compat,
+        getCommonServicesLocked(app.isolated),
+        mCoreSettingsObserver.getCoreSettingsLocked());
+</code></pre><p>ApplicationThread的bindApplication方法发送一个BIND_APPLICATION类型定位消息给mH，mH收到消息后会调用ActivityThread的handleBindApplication方法，该方法就完成了Application的创建以及Contentprovider的创建，可以分为四步：</p>
+<p>1 创建ContextImpl和Instrumentation</p>
+<pre><code>ContextImpl instrContext = ContextImpl.createAppContext(this, pi);
+
+try {
+    java.lang.ClassLoader cl = instrContext.getClassLoader();
+    mInstrumentation = (Instrumentation)
+        cl.loadClass(data.instrumentationName.getClassName()).newInstance();
+} catch (Exception e) {
+    throw new RuntimeException(
+        &quot;Unable to instantiate instrumentation &quot;
+        + data.instrumentationName + &quot;: &quot; + e.toString(), e);
+}
+
+mInstrumentation.init(this, instrContext, appContext,
+       new ComponentName(ii.packageName, ii.name), data.instrumentationWatcher,
+       data.instrumentationUiAutomationConnection);
+</code></pre><p>2 创建Application对象</p>
+<pre><code>Application app = data.info.makeApplication(data.restrictedBackupMode, null);
+mInitialApplication = app;
+</code></pre><p>3 启动当前进程的ContentProvider并调用其中onCreate方法</p>
+<pre><code>List&lt;ProviderInfo&gt; providers = data.providers;
+if (providers != null) {
+    installContentProviders(app, providers);
+    // For process that contains content providers, we want to
+    // ensure that the JIT is enabled &quot;at some point&quot;.
+    mH.sendEmptyMessageDelayed(H.ENABLE_JIT, 10*1000);
+}
+</code></pre><p>installContentProviders完成的ContentProvider的启动工作,首先会遍历当前进程的ProviderInfo的列表，并一一调用installProvider方法来启动他们，然后将启动的ContentProvider发布到AMS中，AMS会把他们存储在ProviderMap中。</p>
+<pre><code>private void installContentProviders(
+    Context context, List&lt;ProviderInfo&gt; providers) {
+final ArrayList&lt;IActivityManager.ContentProviderHolder&gt; results =
+    new ArrayList&lt;IActivityManager.ContentProviderHolder&gt;();
+
+for (ProviderInfo cpi : providers) {
+    if (DEBUG_PROVIDER) {
+        StringBuilder buf = new StringBuilder(128);
+        buf.append(&quot;Pub &quot;);
+        buf.append(cpi.authority);
+        buf.append(&quot;: &quot;);
+        buf.append(cpi.name);
+        Log.i(TAG, buf.toString());
+    }
+    IActivityManager.ContentProviderHolder cph = installProvider(context, null, cpi,
+            false /*noisy*/, true /*noReleaseNeeded*/, true /*stable*/);
+    if (cph != null) {
+        cph.noReleaseNeeded = true;
+        results.add(cph);
+    }
+}
+
+try {
+    ActivityManagerNative.getDefault().publishContentProviders(
+        getApplicationThread(), results);
+} catch (RemoteException ex) {
+}
+}
+</code></pre><p>下面来看一下COntentProvider对象的创建过程，在installProvider方法中有下面一段代码，通过类加载器完成对象创建</p>
+<pre><code>final java.lang.ClassLoader cl = c.getClassLoader();
+localProvider = (ContentProvider)cl.
+    loadClass(info.name).newInstance();
+provider = localProvider.getIContentProvider();
+if (provider == null) {
+    Slog.e(TAG, &quot;Failed to instantiate class &quot; +
+          info.name + &quot; from sourceDir &quot; +
+          info.applicationInfo.sourceDir);
+    return null;
+}
+if (DEBUG_PROVIDER) Slog.v(
+    TAG, &quot;Instantiating local provider &quot; + info.name);
+// XXX Need to create the correct context for this provider.
+localProvider.attachInfo(c, info);
+</code></pre><p>上面代码还会调用COntentProvider的attachInfo方法来调用他的onCreate方法</p>
+<pre><code>private void attachInfo(Context context, ProviderInfo info, boolean testing) {
+    mNoPerms = testing;
+
+    if (mContext == null) {
+        mContext = context;
+        if (context != null) {
+            mTransport.mAppOpsManager = (AppOpsManager) context.getSystemService(
+                    Context.APP_OPS_SERVICE);
+        }
+        mMyUid = Process.myUid();
+        if (info != null) {
+            setReadPermission(info.readPermission);
+            setWritePermission(info.writePermission);
+            setPathPermissions(info.pathPermissions);
+            mExported = info.exported;
+            mSingleUser = (info.flags &amp; ProviderInfo.FLAG_SINGLE_USER) != 0;
+            setAuthorities(info.authority);
+        }
+        ContentProvider.this.onCreate();
+    }
+}
+</code></pre><p>到此为止onCreate方法已经被调用，意味着ContentProvider已经启动完成。</p>
+<p>4 调用Application的onCreate方法</p>
+<p>经过上面四个步骤，ContentPorovider已经成功启动，然后其他应用就可通过AMS来访问这个ContentProvider，拿到该对象之后就可以通过它所提供的接口来访问它了。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Broadcast_Work_Flow" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
