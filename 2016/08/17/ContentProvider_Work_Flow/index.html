@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Service的工作过程 | muhao的程序世界</title>
+  <title>ContentProvider的工作过程 | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="ContentProvider是一种内容共享性组建，它通过Binder向其他组件乃至其他应用提供数据。
 
@@ -12,7 +12,7 @@
 
 一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplicati">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Service的工作过程">
+<meta property="og:title" content="ContentProvider的工作过程">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/17/ContentProvider_Work_Flow/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
 <meta property="og:description" content="ContentProvider是一种内容共享性组建，它通过Binder向其他组件乃至其他应用提供数据。
@@ -21,9 +21,9 @@
 
 一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplicati">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_contentprovider.png">
-<meta property="og:updated_time" content="2016-08-17T07:52:04.112Z">
+<meta property="og:updated_time" content="2016-08-17T16:03:42.470Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Service的工作过程">
+<meta name="twitter:title" content="ContentProvider的工作过程">
 <meta name="twitter:description" content="ContentProvider是一种内容共享性组建，它通过Binder向其他组件乃至其他应用提供数据。
 
 首先来看一下流程图：
@@ -186,7 +186,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Service的工作过程
+      ContentProvider的工作过程
     </h1>
   
 
@@ -416,7 +416,7 @@ localProvider.attachInfo(c, info);
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="ContentProvider_Work_Flow" data-title="Service的工作过程" data-url="http://imuhao.github.io/2016/08/17/ContentProvider_Work_Flow/"></div>
+	<div class="ds-thread" data-thread-key="ContentProvider_Work_Flow" data-title="ContentProvider的工作过程" data-url="http://imuhao.github.io/2016/08/17/ContentProvider_Work_Flow/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
