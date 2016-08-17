@@ -21,7 +21,7 @@
 
 从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_activity.png">
-<meta property="og:updated_time" content="2016-08-17T16:49:13.706Z">
+<meta property="og:updated_time" content="2016-08-17T16:54:04.685Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity的工作过程">
 <meta name="twitter:description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
@@ -219,7 +219,7 @@ int result = ActivityManagerNative.getDefault()
 .startActivity(whoThread, who.getBasePackageName(), intent, intent.resolveTypeIfNeeded
 (who.getContentResolver()),token, target != null ? target.mEmbeddedID : null,
                    requestCode, 0, null, options);
-</code></pre><!--查看全文-->
+</code></pre><a id="more"></a>
 <p>从代码中可以启动Activity真正的实现由ActivityManagerNative.getDefault()的startActivity方法来完成,ActivityManagerNative(下面简称AMS)继承自Binder接口,因此AMS也是一个Binder,因此他也是一个Binder,它是IActivityManager类型的Binder对象.因此Activity的启动过程又转移到了AMS中.</p>
 <p>在AMS的startActivity中又转移到了ActivityStacjSupervisor的startActivityMayWait方法中.</p>
 <p>在该方法中又调用了startActivityLocked方法,接着调用了startActivityUncheckedLocked方法,又调用了ActivityStack的resumeTopActivityLocked.</p>

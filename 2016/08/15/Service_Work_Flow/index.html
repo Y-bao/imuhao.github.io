@@ -22,7 +22,7 @@ Service有两种状态,一种是启动状态,主要用于执行后台计算,另�
 Service的启动过程从ContextWrapper的startServic">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service1.png">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service2.png">
-<meta property="og:updated_time" content="2016-08-17T16:53:04.928Z">
+<meta property="og:updated_time" content="2016-08-17T16:54:01.158Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Service的工作过程">
 <meta name="twitter:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识
@@ -215,9 +215,7 @@ Service的启动过程从ContextWrapper的startServic">
 <pre><code>public ComponentName startService(Intent service) {
        return mBase.startService(service);
    }
-</code></pre><p>上面代码中的mBase的类型是ContextImpl,在Activity创建时会通过attach方法将ContextImpl对象关联起来,ContextWrapper的大部分操作都是mBase来实现的,这种模式叫桥接模式.</p>
-<!--查看全文-->
-<p>在ContextImpl中,startService方法会调用startServiceCommon方法,而该方法会用过ActivityManagerNative.getDefault()对象来启动一个服务,也就是AMS,在AMS来启动服务的行为是一个远程过程调用,在AMS中会通过mServices这个对象完成后续的启动过程,mService对象 的类型是ActivityService,他是辅助AMS进行Service管理的类.包括启动、绑定、停止等.在它的startServiceLocked方法最后会调用startServiceInnerLocked方法,在该方法中并没有完成具体的启动工作,而是把后续的工作交给了bringUpServiceLocked来处理,在该方法中又调用了realStartServiceLocked方法,通过方法名来看这个方法应该是真正启动一个Service.</p>
+</code></pre><p>上面代码中的mBase的类型是ContextImpl,在Activity创建时会通过attach方法将ContextImpl对象关联起来,ContextWrapper的大部分操作都是mBase来实现的,这种模式叫桥接模式.<br><a id="more"></a><br>在ContextImpl中,startService方法会调用startServiceCommon方法,而该方法会用过ActivityManagerNative.getDefault()对象来启动一个服务,也就是AMS,在AMS来启动服务的行为是一个远程过程调用,在AMS中会通过mServices这个对象完成后续的启动过程,mService对象 的类型是ActivityService,他是辅助AMS进行Service管理的类.包括启动、绑定、停止等.在它的startServiceLocked方法最后会调用startServiceInnerLocked方法,在该方法中并没有完成具体的启动工作,而是把后续的工作交给了bringUpServiceLocked来处理,在该方法中又调用了realStartServiceLocked方法,通过方法名来看这个方法应该是真正启动一个Service.</p>
 <p>在realStartServiceLocked方法中首先是通过app.thread的scheduleCreateService方法来调用Service的其他方法,比如onStartCommand,这两个过程均是进程通信.</p>
 <p>app.thread是IApplicationThread类型,它实际上是一个Bunder,他的具体实现是ApplicationThread和ApplicationThreadNative,而前者是继承与后者的,所以我们直接看ApplicationThread对Service启动过程的处理即可.这对应着它的scheduleCreateService方法,这个过程和Activity的启动过程是类似的,都是通过发送消息给Handler H来完成Service的最终完成.</p>
 <p>handlerCreateService方法主要做了这几件事</p>

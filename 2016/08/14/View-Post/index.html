@@ -16,7 +16,7 @@
 <meta property="og:description" content="本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.
 
 在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post">
-<meta property="og:updated_time" content="2016-08-14T15:18:39.694Z">
+<meta property="og:updated_time" content="2016-08-17T16:54:28.089Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="View.Post()的使用细节">
 <meta name="twitter:description" content="本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.
@@ -201,8 +201,7 @@
         <blockquote>
 <p>本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.</p>
 </blockquote>
-<p>在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post方法,在Runnable中进行处理.</p>
-<p>在Android应用运行的时候会调用ActivityThread中的main方法,在该方法中创建主线程的Looper和系统级别的Handler,而在post方法中首先做了一个判断attachInfo不为空则调用他的Handler处理任务,否则就将他添加到ViewRootInpl的RunQueue中.</p>
+<p>在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post方法,在Runnable中进行处理.<br><a id="more"></a><br>在Android应用运行的时候会调用ActivityThread中的main方法,在该方法中创建主线程的Looper和系统级别的Handler,而在post方法中首先做了一个判断attachInfo不为空则调用他的Handler处理任务,否则就将他添加到ViewRootInpl的RunQueue中.</p>
 <p>Android中所有的视图都是通过Window来呈现的，不管是Activity、Dialog还是Toast和Snackbar,他们的视图其实都是附着于Window，所以管理View的最终是Wondow。查看源码，我们发现attachinfo的赋值只有一处：dispatchAttachedToWindow方法。也就是说，View在和Window连接的时候，得到了一系列的信息，其中就包括对系统级的Handler的引用。所以调用view的post方法，其实就是发送了一个任务到MessageQueue的队尾。前面也说了，由于Android的消息驱动机制，View的layout，draw等过程都有涉及。</p>
 <p>当给一个隐藏的控件 做显示 执行动画的时,直接设置动画效果会失效,可以通过调用post在Runnable中对View执行动画</p>
 
