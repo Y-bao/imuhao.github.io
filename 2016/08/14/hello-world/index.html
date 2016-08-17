@@ -4,32 +4,18 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Activity的工作过程 | muhao的程序世界</title>
+  <title>Hello World | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
-
-首先来看一下流程图:
-
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
+  <meta name="description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Activity的工作过程">
-<meta property="og:url" content="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/index.html">
+<meta property="og:title" content="Hello World">
+<meta property="og:url" content="http://imuhao.github.io/2016/08/14/hello-world/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
-<meta property="og:description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
-
-首先来看一下流程图:
-
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_activity.png">
-<meta property="og:updated_time" content="2016-08-17T16:49:13.706Z">
+<meta property="og:description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
+<meta property="og:updated_time" content="2016-08-14T17:02:16.418Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Activity的工作过程">
-<meta name="twitter:description" content="Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?
-
-首先来看一下流程图:
-
-从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivi">
-<meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_activity.png">
+<meta name="twitter:title" content="Hello World">
+<meta name="twitter:description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -169,11 +155,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-Activity_Work_Flow" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/14/Activity_Work_Flow/" class="article-date">
-  	<time datetime="2016-08-14T15:41:37.529Z" itemprop="datePublished">2016-08-14</time>
+      <a href="/2016/08/14/hello-world/" class="article-date">
+  	<time datetime="2016-08-14T06:58:36.213Z" itemprop="datePublished">2016-08-14</time>
 </a>
     </div>
   
@@ -186,7 +172,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Activity的工作过程
+      Hello World
     </h1>
   
 
@@ -195,7 +181,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/点滴记忆/">点滴记忆</a></li></ul>
 	</div>
 
         
@@ -206,45 +192,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p> Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?</p>
-</blockquote>
-<p>首先来看一下流程图:</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_activity.png" alt="img"></p>
-<p>从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法</p>
-<pre><code>public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
-       Intent intent, int requestCode, Bundle options)
-           ....省略代码...
-int result = ActivityManagerNative.getDefault()
-.startActivity(whoThread, who.getBasePackageName(), intent, intent.resolveTypeIfNeeded
-(who.getContentResolver()),token, target != null ? target.mEmbeddedID : null,
-                   requestCode, 0, null, options);
-</code></pre><!--查看全文-->
-<p>从代码中可以启动Activity真正的实现由ActivityManagerNative.getDefault()的startActivity方法来完成,ActivityManagerNative(下面简称AMS)继承自Binder接口,因此AMS也是一个Binder,因此他也是一个Binder,它是IActivityManager类型的Binder对象.因此Activity的启动过程又转移到了AMS中.</p>
-<p>在AMS的startActivity中又转移到了ActivityStacjSupervisor的startActivityMayWait方法中.</p>
-<p>在该方法中又调用了startActivityLocked方法,接着调用了startActivityUncheckedLocked方法,又调用了ActivityStack的resumeTopActivityLocked.</p>
-<p>这个时候启动已经从ActivityStackSupervisor转移到了ActivityStack,resumeTopActivityLocked调用了resumeTopActivityLocked方法,resumeTopActivityLocked方法,又调用了ActivityStackSupervisor的startSpecificActivityLocked方法</p>
-<p>在该方法中调用了realStartActivityLocked方法,在该方法中有这么一段代码</p>
-<pre><code>app.thread.scheduleLaunchActivity(new Intent(r.intent), r.appToken,
-System.identityHashCode(r), r.info, new Configuration(mService.mConfiguration),
-new Configuration(stack.mOverrideConfig), r.compat, r.launchedFromPackage,
-task.voiceInteractor, app.repProcState, r.icicle, r.persistentState, results,
-newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
-</code></pre><p>这段代码很重要,其中app.thread的类型为IApplicationThread,他继承了IInterface接口,所以他是一个Binder类型的接口.该接口内部包含了大量的启动、停止Activity的接口,此外还包含了启动和停止服务的接口,IApplicationThread这个Binder接口的实现者完成了大量的Activity以及Service启动停止相关的功能.他的实现者就是ActivityThread中的内部类ApplicationThread,</p>
-<p>ApplicationThread继承了ApplicationThreadNative,而ApplicationThreadNative则继承了Binder并实现了IApplicationThread接口.</p>
-<p>在ApplicationThreadNative的内部,还有一个ApplicationThreadProxy这个类为AIDL文件自动生成的代理类,种种迹象表明ApplicationThreadNative就是IAppilicationthread的实现者,由于ApplicationThreadNative被系统定义为抽象类,所以ApplicationThread就成了IApplicationthread最终的实现者.</p>
-<p>绕了一大圈,Activity的启动过程最终回到了ApplicationThread中,ApplicationThread通过scheduleLaunchActivity方式来启动Activity,在该方法中通过发送一个启动Activity的消息交由Handler处理,这个Handler有个简洁的名字H,在H对LAUNCH_ACTIVITY这个消息进行处理可以知道,Activity启动过程由ActivityThread的handleLaunchActivity方法来实现</p>
-<p>在该方法中最终通过performLaunchActivity方法完成了Activity对象的创建和启动过程,并且ActivityThread通过handleResumeActivity方法来调用被启动Activity的onResume这一生命周期.</p>
-<p>performLaunchActivity方法主要完成了如下几件事</p>
-<ol>
-<li>从ActivityClientRecord中获取待启动Activity的组建信息.</li>
-<li>通过mInstrumentation的newActivity方法使用类加载器创建Activity对象</li>
-<li>通过LoadedApk的makeApplication方法尝试创建Application对象</li>
-<li>创建ContextImpl对象并通过Activity的attach方法来完成这些重要数据的初始化</li>
-<li>调用Activity的onCreate方法<br>  mInstrumentation.callActivityOnCreate(activity, r.state);</li>
-</ol>
-<p>至此Activity已经完成了启动过程</p>
-
+        <h3 id="第一次用Hexo搭建博客-折腾了一天终于可以运行起来了"><a href="#第一次用Hexo搭建博客-折腾了一天终于可以运行起来了" class="headerlink" title="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了."></a>第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.</h3>
       
     </div>
     
@@ -253,20 +201,15 @@ newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
     
 <nav id="article-nav">
   
-    <a href="/2016/08/15/Service_Work_Flow/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/08/14/View-Post/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          Service的工作过程
+          View.Post()的使用细节
         
       </div>
     </a>
   
-  
-    <a href="/2016/08/14/View-Post/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">View.Post()的使用细节</div>
-      <strong class="article-nav-caption">></strong>
-    </a>
   
 </nav>
 
@@ -299,7 +242,7 @@ newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Activity_Work_Flow" data-title="Activity的工作过程" data-url="http://imuhao.github.io/2016/08/14/Activity_Work_Flow/"></div>
+	<div class="ds-thread" data-thread-key="hello-world" data-title="Hello World" data-url="http://imuhao.github.io/2016/08/14/hello-world/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">

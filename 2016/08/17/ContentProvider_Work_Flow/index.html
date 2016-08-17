@@ -21,7 +21,7 @@
 
 一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplicati">
 <meta property="og:image" content="http://imuhao.qiniudn.com/androidart_contentprovider.png">
-<meta property="og:updated_time" content="2016-08-17T16:47:44.006Z">
+<meta property="og:updated_time" content="2016-08-17T16:48:52.160Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ContentProvider的工作过程">
 <meta name="twitter:description" content="ContentProvider是一种内容共享性组件，它通过Binder向其他组件乃至其他应用提供数据。
@@ -213,7 +213,7 @@
 <p><img src="http://imuhao.qiniudn.com/androidart_contentprovider.png"></p>
 <p>一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplication方法并将ApplicationThread对象提供给AMS，ApplicationThread是一个Binder对象，它的接口是IApplicattionThread，它主要用于ActivityThread和AMS之间通信。</p>
 <p>访问ContentProvider需要通过ContentResolver，它是一个抽象类，通过Context的getContentResolver方法获取的实际上是ApplicationContentResolver对象，该类继承了ContentResolver并实现了ContentResolver中的抽象方法。通过ContentProvider的四个方法中任何一个都可以触发ContentProvider的启动。这里选择query方法。</p>
-<a id="more"></a>
+<!--查看更多-->
 <p>ContentProvider的query方法首先会获取IContentProvider对象，最终会通过ApplicationContentResolver的acquireProvider方法，该方法没有做任何逻辑，直接调用了ActivityThread的acquireExistingProvider方法</p>
 <pre><code>public final IContentProvider acquireProvider(
         Context c, String auth, int userId, boolean stable) {

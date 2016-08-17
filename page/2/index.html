@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>Archives: 2016 | muhao的程序世界</title>
+  <title>muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="muhao的程序世界">
-<meta property="og:url" content="http://imuhao.github.io/archives/2016/index.html">
+<meta property="og:url" content="http://imuhao.github.io/page/2/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="muhao的程序世界">
@@ -153,149 +153,130 @@
 
       <div class="body-wrap">
   
+    <article id="post-View-Post" class="article article-type-post" itemscope itemprop="blogPost">
   
+    <div class="article-meta">
+      <a href="/2016/08/14/View-Post/" class="article-date">
+  	<time datetime="2016-08-14T15:16:57.643Z" itemprop="datePublished">2016-08-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/14/View-Post/">View.Post()的使用细节</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.</p>
+</blockquote>
+<p>在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post方法,在Runnable中进行处理.</p>
+<p>在Android应用运行的时候会调用ActivityThread中的main方法,在该方法中创建主线程的Looper和系统级别的Handler,而在post方法中首先做了一个判断attachInfo不为空则调用他的Handler处理任务,否则就将他添加到ViewRootInpl的RunQueue中.</p>
+<p>Android中所有的视图都是通过Window来呈现的，不管是Activity、Dialog还是Toast和Snackbar,他们的视图其实都是附着于Window，所以管理View的最终是Wondow。查看源码，我们发现attachinfo的赋值只有一处：dispatchAttachedToWindow方法。也就是说，View在和Window连接的时候，得到了一系列的信息，其中就包括对系统级的Handler的引用。所以调用view的post方法，其实就是发送了一个任务到MessageQueue的队尾。前面也说了，由于Android的消息驱动机制，View的layout，draw等过程都有涉及。</p>
+<p>当给一个隐藏的控件 做显示 执行动画的时,直接设置动画效果会失效,可以通过调用post在Runnable中对View执行动画</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/08/17/ContentProvider_Work_Flow/" class="archive-article-date">
-  	<time datetime="2016-08-17T06:31:36.413Z" itemprop="datePublished">Aug 17</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/17/ContentProvider_Work_Flow/">ContentProvider的工作过程</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+      <div class="clearfix"></div>
+    </div>
+    
   </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/08/16/Broadcast_Work_Flow/" class="archive-article-date">
-  	<time datetime="2016-08-15T16:09:47.669Z" itemprop="datePublished">Aug 16</time>
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/14/hello-world/" class="article-date">
+  	<time datetime="2016-08-14T06:58:36.213Z" itemprop="datePublished">2016-08-14</time>
 </a>
-        </div>
-    	 
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/16/Broadcast_Work_Flow/">BroadcastReceiver的工作过程</a>
+      <a class="article-title" href="/2016/08/14/hello-world/">Hello World</a>
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="第一次用Hexo搭建博客-折腾了一天终于可以运行起来了"><a href="#第一次用Hexo搭建博客-折腾了一天终于可以运行起来了" class="headerlink" title="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了."></a>第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.</h3>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/点滴记忆/">点滴记忆</a></li></ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+      <div class="clearfix"></div>
+    </div>
+    
   </div>
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/08/15/Service_Work_Flow/" class="archive-article-date">
-  	<time datetime="2016-08-15T11:59:36.464Z" itemprop="datePublished">Aug 15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/15/Service_Work_Flow/">Service的工作过程</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/08/14/Activity_Work_Flow/" class="archive-article-date">
-  	<time datetime="2016-08-14T15:41:37.529Z" itemprop="datePublished">Aug 14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/08/14/Activity_Work_Flow/">Activity的工作过程</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
+
+
   
   
-    </div></section>
-  
-
-    
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2016/page/2/">2</a><a class="extend next" rel="next" href="/archives/2016/page/2/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
     </nav>
   
-
 </div>
       <footer id="footer">
   <div class="outer">
@@ -321,9 +302,9 @@
 		fancybox: true,
 		mathjax: true,
 		animate: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
-		isArchive: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

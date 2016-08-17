@@ -186,6 +186,165 @@
 <p><img src="http://imuhao.qiniudn.com/androidart_contentprovider.png"></p>
 <p>一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplication方法并将ApplicationThread对象提供给AMS，ApplicationThread是一个Binder对象，它的接口是IApplicattionThread，它主要用于ActivityThread和AMS之间通信。</p>
 <p>访问ContentProvider需要通过ContentResolver，它是一个抽象类，通过Context的getContentResolver方法获取的实际上是ApplicationContentResolver对象，该类继承了ContentResolver并实现了ContentResolver中的抽象方法。通过ContentProvider的四个方法中任何一个都可以触发ContentProvider的启动。这里选择query方法。</p>
+<!--查看更多-->
+<p>ContentProvider的query方法首先会获取IContentProvider对象，最终会通过ApplicationContentResolver的acquireProvider方法，该方法没有做任何逻辑，直接调用了ActivityThread的acquireExistingProvider方法</p>
+<pre><code>public final IContentProvider acquireProvider(
+        Context c, String auth, int userId, boolean stable) {
+    final IContentProvider provider = acquireExistingProvider(c, auth, userId, stable);
+    if (provider != null) {
+        return provider;
+    }
+    IActivityManager.ContentProviderHolder holder = null;
+    try {
+        holder = ActivityManagerNative.getDefault().getContentProvider(
+                getApplicationThread(), auth, userId, stable);
+    } catch (RemoteException ex) {
+    }
+    if (holder == null) {
+        Slog.e(TAG, &quot;Failed to find provider info for &quot; + auth);
+        return null;
+    }
+
+    // Install provider will increment the reference count for us, and break
+    // any ties in the race.
+    holder = installProvider(c, holder, holder.info,
+            true /*noisy*/, holder.noReleaseNeeded, stable);
+    return holder.provider;
+}
+</code></pre><p>上面代码中首先会从ActivityThread中查找是否已经存在ContentProvider，如果存在就直接返回，ActivityThread中通过mProviderMap来存储已经启动的ContentProvider对象，该容器的声明如下：</p>
+<pre><code>final ArrayMap&lt;ProviderKey, ProviderClientRecord&gt; mProviderMap= new ArrayMap&lt;ProviderKey, ProviderClientRecord&gt;();
+</code></pre><p>如果不存在就发送一个进程间请求给AMS让其启动，再通过installProvider方法来修改引用计数。<br>AMS是通过startProcessLocked方法来完成进程的启动，内部主要通过Process的start方法来完成进程的启动，新进程启动后的入口方法为ActivityThread的main方法：</p>
+<pre><code>public static void main(String[] args) {
+
+       ActivityThread thread = new ActivityThread();
+       thread.attach(false);
+
+       if (sMainThreadHandler == null) {
+           sMainThreadHandler = thread.getHandler();
+       }
+
+       if (false) {
+           Looper.myLooper().setMessageLogging(new
+                   LogPrinter(Log.DEBUG, &quot;ActivityThread&quot;));
+       }
+
+       // End of event ActivityThreadMain.
+       Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+       Looper.loop();
+
+       throw new RuntimeException(&quot;Main thread loop unexpectedly exited&quot;);
+   }
+</code></pre><p>在该方法中首先会调用ActivityThread的实例并调用attach方法进行初始化，然后进行消息循环，attach方法会将ApplicationThread对象通过AMS的attachApplication方法跨进程传给AMS，最终完成Contentprovider的创建。</p>
+<pre><code>try {
+                mgr.releaseSomeActivities(mAppThread);
+            } catch (RemoteException e) {
+            }
+</code></pre><p>APS的attachApplication方法调用了attachApplicationLocked方法，该方法又调用了ApplicationThread的bindApplication方法</p>
+<pre><code>thread.bindApplication(processName, appInfo, providers, app.instrumentationClass,
+        profilerInfo, app.instrumentationArguments, app.instrumentationWatcher,
+        app.instrumentationUiAutomationConnection, testMode, enableOpenGlTrace,
+        isRestrictedBackupMode || !normalMode, app.persistent,
+        new Configuration(mConfiguration), app.compat,
+        getCommonServicesLocked(app.isolated),
+        mCoreSettingsObserver.getCoreSettingsLocked());
+</code></pre><p>ApplicationThread的bindApplication方法发送一个BIND_APPLICATION类型定位消息给mH，mH收到消息后会调用ActivityThread的handleBindApplication方法，该方法就完成了Application的创建以及Contentprovider的创建，可以分为四步：</p>
+<p>1 创建ContextImpl和Instrumentation</p>
+<pre><code>ContextImpl instrContext = ContextImpl.createAppContext(this, pi);
+
+try {
+    java.lang.ClassLoader cl = instrContext.getClassLoader();
+    mInstrumentation = (Instrumentation)
+        cl.loadClass(data.instrumentationName.getClassName()).newInstance();
+} catch (Exception e) {
+    throw new RuntimeException(
+        &quot;Unable to instantiate instrumentation &quot;
+        + data.instrumentationName + &quot;: &quot; + e.toString(), e);
+}
+
+mInstrumentation.init(this, instrContext, appContext,
+       new ComponentName(ii.packageName, ii.name), data.instrumentationWatcher,
+       data.instrumentationUiAutomationConnection);
+</code></pre><p>2 创建Application对象</p>
+<pre><code>Application app = data.info.makeApplication(data.restrictedBackupMode, null);
+mInitialApplication = app;
+</code></pre><p>3 启动当前进程的ContentProvider并调用其中onCreate方法</p>
+<pre><code>List&lt;ProviderInfo&gt; providers = data.providers;
+if (providers != null) {
+    installContentProviders(app, providers);
+    // For process that contains content providers, we want to
+    // ensure that the JIT is enabled &quot;at some point&quot;.
+    mH.sendEmptyMessageDelayed(H.ENABLE_JIT, 10*1000);
+}
+</code></pre><p>installContentProviders完成的ContentProvider的启动工作,首先会遍历当前进程的ProviderInfo的列表，并一一调用installProvider方法来启动他们，然后将启动的ContentProvider发布到AMS中，AMS会把他们存储在ProviderMap中。</p>
+<pre><code>private void installContentProviders(
+    Context context, List&lt;ProviderInfo&gt; providers) {
+final ArrayList&lt;IActivityManager.ContentProviderHolder&gt; results =
+    new ArrayList&lt;IActivityManager.ContentProviderHolder&gt;();
+
+for (ProviderInfo cpi : providers) {
+    if (DEBUG_PROVIDER) {
+        StringBuilder buf = new StringBuilder(128);
+        buf.append(&quot;Pub &quot;);
+        buf.append(cpi.authority);
+        buf.append(&quot;: &quot;);
+        buf.append(cpi.name);
+        Log.i(TAG, buf.toString());
+    }
+    IActivityManager.ContentProviderHolder cph = installProvider(context, null, cpi,
+            false /*noisy*/, true /*noReleaseNeeded*/, true /*stable*/);
+    if (cph != null) {
+        cph.noReleaseNeeded = true;
+        results.add(cph);
+    }
+}
+
+try {
+    ActivityManagerNative.getDefault().publishContentProviders(
+        getApplicationThread(), results);
+} catch (RemoteException ex) {
+}
+}
+</code></pre><p>下面来看一下COntentProvider对象的创建过程，在installProvider方法中有下面一段代码，通过类加载器完成对象创建</p>
+<pre><code>final java.lang.ClassLoader cl = c.getClassLoader();
+localProvider = (ContentProvider)cl.
+    loadClass(info.name).newInstance();
+provider = localProvider.getIContentProvider();
+if (provider == null) {
+    Slog.e(TAG, &quot;Failed to instantiate class &quot; +
+          info.name + &quot; from sourceDir &quot; +
+          info.applicationInfo.sourceDir);
+    return null;
+}
+if (DEBUG_PROVIDER) Slog.v(
+    TAG, &quot;Instantiating local provider &quot; + info.name);
+// XXX Need to create the correct context for this provider.
+localProvider.attachInfo(c, info);
+</code></pre><p>上面代码还会调用COntentProvider的attachInfo方法来调用他的onCreate方法</p>
+<pre><code>private void attachInfo(Context context, ProviderInfo info, boolean testing) {
+    mNoPerms = testing;
+
+    if (mContext == null) {
+        mContext = context;
+        if (context != null) {
+            mTransport.mAppOpsManager = (AppOpsManager) context.getSystemService(
+                    Context.APP_OPS_SERVICE);
+        }
+        mMyUid = Process.myUid();
+        if (info != null) {
+            setReadPermission(info.readPermission);
+            setWritePermission(info.writePermission);
+            setPathPermissions(info.pathPermissions);
+            mExported = info.exported;
+            mSingleUser = (info.flags &amp; ProviderInfo.FLAG_SINGLE_USER) != 0;
+            setAuthorities(info.authority);
+        }
+        ContentProvider.this.onCreate();
+    }
+}
+</code></pre><p>到此为止onCreate方法已经被调用，意味着ContentProvider已经启动完成。</p>
+<p>4 调用Application的onCreate方法</p>
+<p>经过上面四个步骤，ContentPorovider已经成功启动，然后其他应用就可通过AMS来访问这个ContentProvider，拿到该对象之后就可以通过它所提供的接口来访问它了。</p>
+
       
     </div>
     
@@ -198,10 +357,6 @@
 
       
 
-      
-        <p class="article-more-link">
-          <a  href="/2016/08/17/ContentProvider_Work_Flow/#more">more >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -251,6 +406,7 @@
 <h2 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h2><p>首先看下流程图：</p>
 <p><img src="http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png"></p>
 <p>广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。<br>这里只分析广播的动态注册，动态注册过程是从ContextWrapper的registerReceiver方法开始的，ContextWrapper并没有实际工作，而是将注册交给了ContextImpl来完成。</p>
+<!--查看全文-->
 <pre><code>public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
     return registerReceiver(receiver, filter, null, null);
 }
@@ -505,8 +661,7 @@ receiver.onReceive(mContext, intent);
 <pre><code>public ComponentName startService(Intent service) {
        return mBase.startService(service);
    }
-</code></pre><p>上面代码中的mBase的类型是ContextImpl,在Activity创建时会通过attach方法将ContextImpl对象关联起来,ContextWrapper的大部分操作都是mBase来实现的,这种模式叫桥接模式.</p>
-<p>在ContextImpl中,startService方法会调用startServiceCommon方法,而该方法会用过ActivityManagerNative.getDefault()对象来启动一个服务,也就是AMS,在AMS来启动服务的行为是一个远程过程调用,在AMS中会通过mServices这个对象完成后续的启动过程,mService对象 的类型是ActivityService,他是辅助AMS进行Service管理的类.包括启动、绑定、停止等.在它的startServiceLocked方法最后会调用startServiceInnerLocked方法,在该方法中并没有完成具体的启动工作,而是把后续的工作交给了bringUpServiceLocked来处理,在该方法中又调用了realStartServiceLocked方法,通过方法名来看这个方法应该是真正启动一个Service.</p>
+</code></pre><p>上面代码中的mBase的类型是ContextImpl,在Activity创建时会通过attach方法将ContextImpl对象关联起来,ContextWrapper的大部分操作都是mBase来实现的,这种模式叫桥接模式.<br><!--查看全文--><br>在ContextImpl中,startService方法会调用startServiceCommon方法,而该方法会用过ActivityManagerNative.getDefault()对象来启动一个服务,也就是AMS,在AMS来启动服务的行为是一个远程过程调用,在AMS中会通过mServices这个对象完成后续的启动过程,mService对象 的类型是ActivityService,他是辅助AMS进行Service管理的类.包括启动、绑定、停止等.在它的startServiceLocked方法最后会调用startServiceInnerLocked方法,在该方法中并没有完成具体的启动工作,而是把后续的工作交给了bringUpServiceLocked来处理,在该方法中又调用了realStartServiceLocked方法,通过方法名来看这个方法应该是真正启动一个Service.</p>
 <p>在realStartServiceLocked方法中首先是通过app.thread的scheduleCreateService方法来调用Service的其他方法,比如onStartCommand,这两个过程均是进程通信.</p>
 <p>app.thread是IApplicationThread类型,它实际上是一个Bunder,他的具体实现是ApplicationThread和ApplicationThreadNative,而前者是继承与后者的,所以我们直接看ApplicationThread对Service启动过程的处理即可.这对应着它的scheduleCreateService方法,这个过程和Activity的启动过程是类似的,都是通过发送消息给Handler H来完成Service的最终完成.</p>
 <p>handlerCreateService方法主要做了这几件事</p>
@@ -625,7 +780,8 @@ int result = ActivityManagerNative.getDefault()
 .startActivity(whoThread, who.getBasePackageName(), intent, intent.resolveTypeIfNeeded
 (who.getContentResolver()),token, target != null ? target.mEmbeddedID : null,
                    requestCode, 0, null, options);
-</code></pre><p>从代码中可以启动Activity真正的实现由ActivityManagerNative.getDefault()的startActivity方法来完成,ActivityManagerNative(下面简称AMS)继承自Binder接口,因此AMS也是一个Binder,因此他也是一个Binder,它是IActivityManager类型的Binder对象.因此Activity的启动过程又转移到了AMS中.</p>
+</code></pre><!--查看全文-->
+<p>从代码中可以启动Activity真正的实现由ActivityManagerNative.getDefault()的startActivity方法来完成,ActivityManagerNative(下面简称AMS)继承自Binder接口,因此AMS也是一个Binder,因此他也是一个Binder,它是IActivityManager类型的Binder对象.因此Activity的启动过程又转移到了AMS中.</p>
 <p>在AMS的startActivity中又转移到了ActivityStacjSupervisor的startActivityMayWait方法中.</p>
 <p>在该方法中又调用了startActivityLocked方法,接着调用了startActivityUncheckedLocked方法,又调用了ActivityStack的resumeTopActivityLocked.</p>
 <p>这个时候启动已经从ActivityStackSupervisor转移到了ActivityStack,resumeTopActivityLocked调用了resumeTopActivityLocked方法,resumeTopActivityLocked方法,又调用了ActivityStackSupervisor的startSpecificActivityLocked方法</p>
@@ -679,125 +835,10 @@ newIntents, !andResume, mService.isNextTransitionForward(), profilerInfo);
 
 
   
-    <article id="post-View-Post" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2016/08/14/View-Post/" class="article-date">
-  	<time datetime="2016-08-14T15:16:57.643Z" itemprop="datePublished">2016-08-14</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/14/View-Post/">View.Post()的使用细节</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>本质上是依赖于Handler,Looper,MessageQueue,Message为基础的异步消息处理机制.相比于创建的Handler处理更加便捷,作用也不仅仅如此.</p>
-</blockquote>
-<p>在使用SwipeRefreshLayout的时候如果直接在onCreate中刷新没有效果.是因为mOriginalOffsetTop变量没有取得正确的值,导致无法实现刷新,类似于获取某个View的宽高.解决方案就是调用post方法,在Runnable中进行处理.</p>
-<p>在Android应用运行的时候会调用ActivityThread中的main方法,在该方法中创建主线程的Looper和系统级别的Handler,而在post方法中首先做了一个判断attachInfo不为空则调用他的Handler处理任务,否则就将他添加到ViewRootInpl的RunQueue中.</p>
-<p>Android中所有的视图都是通过Window来呈现的，不管是Activity、Dialog还是Toast和Snackbar,他们的视图其实都是附着于Window，所以管理View的最终是Wondow。查看源码，我们发现attachinfo的赋值只有一处：dispatchAttachedToWindow方法。也就是说，View在和Window连接的时候，得到了一系列的信息，其中就包括对系统级的Handler的引用。所以调用view的post方法，其实就是发送了一个任务到MessageQueue的队尾。前面也说了，由于Android的消息驱动机制，View的layout，draw等过程都有涉及。</p>
-<p>当给一个隐藏的控件 做显示 执行动画的时,直接设置动画效果会失效,可以通过调用post在Runnable中对View执行动画</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/08/14/hello-world/" class="article-date">
-  	<time datetime="2016-08-14T06:58:36.213Z" itemprop="datePublished">2016-08-14</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/08/14/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="第一次用Hexo搭建博客-折腾了一天终于可以运行起来了"><a href="#第一次用Hexo搭建博客-折腾了一天终于可以运行起来了" class="headerlink" title="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了."></a>第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.</h3>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/点滴记忆/">点滴记忆</a></li></ul>
-	</div>
-
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 </div>
       <footer id="footer">
