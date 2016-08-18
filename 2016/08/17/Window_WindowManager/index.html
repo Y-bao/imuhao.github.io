@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>muhao的程序世界</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="title:理解Window和WindowManager
+tags:Android笔记
+Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+
+Window">
+<meta property="og:type" content="article">
+<meta property="og:title" content="muhao的程序世界">
+<meta property="og:url" content="http://imuhao.github.io/2016/08/17/Window_WindowManager/index.html">
+<meta property="og:site_name" content="muhao的程序世界">
+<meta property="og:description" content="title:理解Window和WindowManager
+tags:Android笔记
+Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+
+Window">
+<meta property="og:updated_time" content="2016-08-18T16:39:03.969Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="muhao的程序世界">
+<meta name="twitter:description" content="title:理解Window和WindowManager
+tags:Android笔记
+Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+
+Window">
+  
+    <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img src="/img/conan-paper-small.png" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">万事起于忽微 , 量变引起质变.</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/imuhao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/2630380541" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/gu-shi-huan-chang-76-3" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Android笔记/" style="font-size: 20px;">Android笔记</a> <a href="/tags/点滴记忆/" style="font-size: 10px;">点滴记忆</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">万事起于忽微 , 量变引起质变.</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				
+					<img src="/img/conan-paper-small.png" class="js-avatar" style="width: 100%;height: 100%;opacity: 1;">
+				
+			</div>
+			<hgroup>
+			  <h1 class="header-author">万事起于忽微 , 量变引起质变.</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/imuhao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/2630380541" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/gu-shi-huan-chang-76-3" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-Window_WindowManager" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/08/17/Window_WindowManager/" class="article-date">
+  	<time datetime="2016-08-17T06:32:31.361Z" itemprop="datePublished">2016-08-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>title:理解Window和WindowManager</p>
+<h2 id="tags-Android笔记"><a href="#tags-Android笔记" class="headerlink" title="tags:Android笔记"></a>tags:Android笔记</h2><blockquote>
+<p>Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。<br>通过WindowManager来创建Window。<br>Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。</p>
+</blockquote>
+<h2 id="Window与WindowManager"><a href="#Window与WindowManager" class="headerlink" title="Window与WindowManager"></a>Window与WindowManager</h2><p>(1). 使用WindowManager添加一个Window的过程：</p>
+<pre><code>Button button = new Button(this);
+button.setText(&quot;button&quot;);
+WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        0, 0, PixelFormat.TRANSPARENT);
+params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+params.gravity = Gravity.LEFT | Gravity.TOP;
+params.x = 100;
+params.y = 300;
+WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+windowManager.addView(button,params);
+</code></pre><p>上面的代码将一个Button添加到屏幕坐标为（100，300）的位置.<br><a id="more"></a><br>(2).WindowManager.LayoutParams中的flag参数表示Window的属性，下面是几个比较常用的属性。</p>
+<ul>
+<li>FLAG_NOT_FOCUSABLE</li>
+</ul>
+<p>表示window不需要获取焦点，也不需要接收各种输入事件。此标记会同时启用FLAG_NOT_TOUCH_MODAL，最终事件会直接传递给下层的具有焦点的window；</p>
+<ul>
+<li>FLAG_NOT_TOUCH_MODAL：</li>
+</ul>
+<p>在此模式下，系统会将window区域外的单击事件传递给底层的window，当前window区域内的单击事件则自己处理，一般都需要开启这个标记；</p>
+<ul>
+<li>FLAG_SHOW_WHEN_LOCKED</li>
+</ul>
+<p>开启此模式可以让Window显示在锁屏的界面上</p>
+<p>(3).TYPE参数表示Window的类型，有三种，分别是应用Window，子Window和系统Window。</p>
+<p>应用window对应着一个Activity，子window不能独立存在，需要附属在特定的父window之上，比如Dialog就是子window。系统window是需要声明权限才能创建的window，比如Toast和系统状态栏这些都是系统window，需要声明的权限是<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW">。</uses-permission></p>
+<p>(4). window是分层的，每个window都对应着z-ordered，层级大的会覆盖在层级小的上面，应用window的层级范围是1~99，子window的层级范围是1000~1999，系统window的层级范围是2000~2999。<br>[注意，应用window的层级范围并不是1~999哟]</p>
+<p>(5).WindowManager继承自ViewManager，常用的只有三个方法：addView、updateView和removeView。</p>
+<h2 id="Window的内部机制"><a href="#Window的内部机制" class="headerlink" title="Window的内部机制"></a>Window的内部机制</h2><p>(1).Window是一个抽象的概念，不是实际存在的，它也是以View的形式存在。在实际使用中无法直接访问Window，只能通过WindowManager才能访问Window。每个Window都对应着一个View和一个ViewRootImpl，Window和View通过ViewRootImpl来建立联系。</p>
+<p>(2). Window的添加、删除和更新过程都是IPC过程，以Window的添加为例，WindowManager的实现类对于addView、updateView和removeView方法都是委托给WindowManagerGlobal类，该类保存了很多数据列表，例如所有window对应的view集合mViews、所有window对应的ViewRootImpl的集合mRoots等，之后添加操作交给了ViewRootImpl来处理，接着会通过WindowSession来完成Window的添加过程，这个过程是一个IPC调用，因为最终是通过WindowManagerService来完成window的添加的。</p>
+<h2 id="Window的添加过程"><a href="#Window的添加过程" class="headerlink" title="Window的添加过程"></a>Window的添加过程</h2><p>(1)Activity的window创建过程</p>
+<p>1.Activity的启动过程很复杂，最终会由ActivityThread中的performLaunchActivity来完成整个启动过程，在这个方法内部会通过类加载器创建Activity的实例对象，并调用它的attach方法为其关联运行过程中所依赖的一系列上下文环境变量；</p>
+<p>2.Activity实现了Window的Callback接口，当window接收到外界的状态变化时就会回调Activity的方法，例如onAttachedToWindow、onDetachedFromWindow、dispatchTouchEvent等；</p>
+<p>3.Activity的Window是由PolicyManager来创建的，它的真正实现是Policy类，它会新建一个PhoneWindow对象，Activity的setContentView的实现是由PhoneWindow来实现的；</p>
+<p>4.Activity的顶级View是DecorView，它本质上是一个FrameLayout。如果没有DecorView，那么PhoneWindow会先创建一个DecorView，然后加载具体的布局文件并将view添加到DecorView的mContentParent中，最后就是回调Activity的onContentChanged通知Activity视图已经发生了变化；</p>
+<p>5.还有一个步骤是让WindowManager能够识别DecorView，在ActivityThread调用handleResumeActivity方法时，首先会调用Activity的onResume方法，然后会调用makeVisible方法，这个方法中DecorView真正地完成了添加和显示过程。</p>
+<pre><code>ViewManager vm = getWindowManager();
+vm.addView(mDecor, getWindow().getAttributes());
+mWindowAdded = true;
+</code></pre><p>(2)Dialog的Window创建过程</p>
+<p>1.过程与Activity的Window创建过程类似，普通的Dialog的有一个特别之处，即它必须采用Activity的Context，如果采用Application的Context会报错。原因是Application没有应用token，应用token一般是Activity拥有的。</p>
+<p>(3)Toast的Window创建过程</p>
+<p>1.Toast属于系统Window，它内部的视图由两种方式指定：一种是系统默认的演示；另一种是通过setView方法来指定一个自定义的View。</p>
+<p>2.Toast具有定时取消功能，所以系统采用了Handler。Toast的显示和隐藏是IPC过程，都需要NotificationManagerService来实现。在Toast和NMS进行IPC过程时，NMS会跨进程回调Toast中的TN类中的方法，TN类是一个Binder类，运行在Binder线程池中，所以需要通过Handler将其切换到当前发送Toast请求所在的线程，所以Toast无法在没有Looper的线程中弹出。</p>
+<p>3.对于非系统应用来说，mToastQueue最多能同时存在50个ToastRecord，这样做是为了防止DOS(Denial of Service，拒绝服务)。因为如果某个应用弹出太多的Toast会导致其他应用没有机会弹出Toast。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/08/17/ContentProvider_Work_Flow/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ContentProvider的工作过程</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Window_WindowManager" data-title="" data-url="http://imuhao.github.io/2016/08/17/Window_WindowManager/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 万事起于忽微 , 量变引起质变.
+    	</div>
+      	<div class="footer-right">
+      		 本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次
+      	</div>
+		
+    </div>
+  </div>
+</footer>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: ''
+		
+	}
+
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
