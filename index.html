@@ -166,11 +166,20 @@
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/08/17/Window_WindowManager/">理解Window和WindowManager</a>
+    </h1>
+  
+
+      </header>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <hr>
-<p>title:理解Window和WindowManager</p>
-<h2 id="tags-Android笔记"><a href="#tags-Android笔记" class="headerlink" title="tags:Android笔记"></a>tags:Android笔记</h2><blockquote>
+        <blockquote>
 <p>Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。<br>通过WindowManager来创建Window。<br>Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。</p>
 </blockquote>
 <h2 id="Window与WindowManager"><a href="#Window与WindowManager" class="headerlink" title="Window与WindowManager"></a>Window与WindowManager</h2><p>(1). 使用WindowManager添加一个Window的过程：</p>
@@ -195,6 +204,10 @@ windowManager.addView(button,params);
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
       
 
       

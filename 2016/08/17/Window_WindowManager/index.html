@@ -4,30 +4,24 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>muhao的程序世界</title>
+  <title>理解Window和WindowManager | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="title:理解Window和WindowManager
-tags:Android笔记
-Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+  <meta name="description" content="Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
 
-Window">
+Window与WindowManager(1). 使用WindowManager添加一个Window">
 <meta property="og:type" content="article">
-<meta property="og:title" content="muhao的程序世界">
+<meta property="og:title" content="理解Window和WindowManager">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/17/Window_WindowManager/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
-<meta property="og:description" content="title:理解Window和WindowManager
-tags:Android笔记
-Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+<meta property="og:description" content="Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
 
-Window">
-<meta property="og:updated_time" content="2016-08-18T16:39:03.969Z">
+Window与WindowManager(1). 使用WindowManager添加一个Window">
+<meta property="og:updated_time" content="2016-08-18T16:39:50.907Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="muhao的程序世界">
-<meta name="twitter:description" content="title:理解Window和WindowManager
-tags:Android笔记
-Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
+<meta name="twitter:title" content="理解Window和WindowManager">
+<meta name="twitter:description" content="Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。通过WindowManager来创建Window。Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。
 
-Window">
+Window与WindowManager(1). 使用WindowManager添加一个Window">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -180,11 +174,31 @@ Window">
       <input type="hidden" class="isFancy" />
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      理解Window和WindowManager
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <hr>
-<p>title:理解Window和WindowManager</p>
-<h2 id="tags-Android笔记"><a href="#tags-Android笔记" class="headerlink" title="tags:Android笔记"></a>tags:Android笔记</h2><blockquote>
+        <blockquote>
 <p>Window是一个窗口的概念，是一个抽象类，具体实现是PhoneWindow。<br>通过WindowManager来创建Window。<br>Window的具体实现位于WindowManagerService，WindowsManager和WindowMannagerService的交互是一个IPC的过程。</p>
 </blockquote>
 <h2 id="Window与WindowManager"><a href="#Window与WindowManager" class="headerlink" title="Window与WindowManager"></a>Window与WindowManager</h2><p>(1). 使用WindowManager添加一个Window的过程：</p>
@@ -282,7 +296,7 @@ mWindowAdded = true;
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Window_WindowManager" data-title="" data-url="http://imuhao.github.io/2016/08/17/Window_WindowManager/"></div>
+	<div class="ds-thread" data-thread-key="Window_WindowManager" data-title="理解Window和WindowManager" data-url="http://imuhao.github.io/2016/08/17/Window_WindowManager/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
