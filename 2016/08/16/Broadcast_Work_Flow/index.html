@@ -20,9 +20,9 @@
 广播的注册过程首先看下流程图：
 
 广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。这里只分析广播的动态注册，动态注册过程是从ContextWrapper">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_broadcastreceiver2.png">
-<meta property="og:updated_time" content="2016-08-17T16:54:07.612Z">
+<meta property="og:image" content="https://imuhao.github.io/image/androidart_broadcastreceiver1.png">
+<meta property="og:image" content="https://imuhao.github.io/image/androidart_broadcastreceiver2.png">
+<meta property="og:updated_time" content="2016-08-19T15:02:44.053Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="BroadcastReceiver的工作过程">
 <meta name="twitter:description" content="本文将介绍BroadcastReceiver的工作过程,主要包含两个方面的内容，一个是广播的注册过程，一个是广播的发送和接受过程。
@@ -30,7 +30,7 @@
 广播的注册过程首先看下流程图：
 
 广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。这里只分析广播的动态注册，动态注册过程是从ContextWrapper">
-<meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png">
+<meta name="twitter:image" content="https://imuhao.github.io/image/androidart_broadcastreceiver1.png">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -211,7 +211,7 @@
 <p> 本文将介绍BroadcastReceiver的工作过程,主要包含两个方面的内容，一个是广播的注册过程，一个是广播的发送和接受过程。</p>
 </blockquote>
 <h2 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h2><p>首先看下流程图：</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png"></p>
+<p><img src="https://imuhao.github.io/image/androidart_broadcastreceiver1.png"></p>
 <p>广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。<br>这里只分析广播的动态注册，动态注册过程是从ContextWrapper的registerReceiver方法开始的，ContextWrapper并没有实际工作，而是将注册交给了ContextImpl来完成。</p>
 <a id="more"></a>
 <pre><code>public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
@@ -260,7 +260,7 @@ BroadcastFilter bf = new BroadcastFilter(filter, rl, callerPackage,
         }
 </code></pre><p>这样整个广播的注册过程就完成了。</p>
 <h2 id="广播的发送和接受过程"><a href="#广播的发送和接受过程" class="headerlink" title="广播的发送和接受过程"></a>广播的发送和接受过程</h2><p>流程图：</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_broadcastreceiver2.png"></p>
+<p><img src="https://imuhao.github.io/image/androidart_broadcastreceiver2.png"></p>
 <p>当通过send方法来发送广播时，AMS会查找出匹配的广播接受者并将广播发送给他们处理。<br>广播发送有几种类型：普通广播、有序广播、粘性广播。这里只分析普通广播的实现。</p>
 <p>广播的发送开始于ContextImpl的sendBroadcast，源码如下：</p>
 <pre><code>public void sendBroadcast(Intent intent) {

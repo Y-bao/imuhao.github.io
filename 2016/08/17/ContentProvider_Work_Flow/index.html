@@ -20,8 +20,8 @@
 首先来看一下流程图：
 
 一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplicati">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_contentprovider.png">
-<meta property="og:updated_time" content="2016-08-17T16:54:10.601Z">
+<meta property="og:image" content="https://imuhao.github.io/image/androidart_contentprovider.png">
+<meta property="og:updated_time" content="2016-08-19T15:03:13.066Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ContentProvider的工作过程">
 <meta name="twitter:description" content="ContentProvider是一种内容共享性组件，它通过Binder向其他组件乃至其他应用提供数据。
@@ -29,7 +29,7 @@
 首先来看一下流程图：
 
 一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplicati">
-<meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_contentprovider.png">
+<meta name="twitter:image" content="https://imuhao.github.io/image/androidart_contentprovider.png">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -210,7 +210,7 @@
 <p>ContentProvider是一种内容共享性组件，它通过Binder向其他组件乃至其他应用提供数据。</p>
 </blockquote>
 <p>首先来看一下流程图：</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_contentprovider.png"></p>
+<p><img src="https://imuhao.github.io/image/androidart_contentprovider.png"></p>
 <p>一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplication方法并将ApplicationThread对象提供给AMS，ApplicationThread是一个Binder对象，它的接口是IApplicattionThread，它主要用于ActivityThread和AMS之间通信。</p>
 <p>访问ContentProvider需要通过ContentResolver，它是一个抽象类，通过Context的getContentResolver方法获取的实际上是ApplicationContentResolver对象，该类继承了ContentResolver并实现了ContentResolver中的抽象方法。通过ContentProvider的四个方法中任何一个都可以触发ContentProvider的启动。这里选择query方法。</p>
 <a id="more"></a>

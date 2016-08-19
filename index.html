@@ -261,7 +261,7 @@ windowManager.addView(button,params);
 <p>ContentProvider是一种内容共享性组件，它通过Binder向其他组件乃至其他应用提供数据。</p>
 </blockquote>
 <p>首先来看一下流程图：</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_contentprovider.png"></p>
+<p><img src="https://imuhao.github.io/image/androidart_contentprovider.png"></p>
 <p>一个应用的入口方法为ActivityThread的main方法，该方法是一个静态方法，在main方法中会创建ActivityThread的实例并创建主线程的消息队列，然后在ActivityThread的attach方法中会远程调用AMS的attachApplication方法并将ApplicationThread对象提供给AMS，ApplicationThread是一个Binder对象，它的接口是IApplicattionThread，它主要用于ActivityThread和AMS之间通信。</p>
 <p>访问ContentProvider需要通过ContentResolver，它是一个抽象类，通过Context的getContentResolver方法获取的实际上是ApplicationContentResolver对象，该类继承了ContentResolver并实现了ContentResolver中的抽象方法。通过ContentProvider的四个方法中任何一个都可以触发ContentProvider的启动。这里选择query方法。</p>
       
@@ -327,7 +327,7 @@ windowManager.addView(button,params);
 <p> 本文将介绍BroadcastReceiver的工作过程,主要包含两个方面的内容，一个是广播的注册过程，一个是广播的发送和接受过程。</p>
 </blockquote>
 <h2 id="广播的注册过程"><a href="#广播的注册过程" class="headerlink" title="广播的注册过程"></a>广播的注册过程</h2><p>首先看下流程图：</p>
-<p><img src = "http://imuhao.qiniudn.com/androidart_broadcastreceiver1.png"></p>
+<p><img src = "https://imuhao.github.io/image/androidart_broadcastreceiver1.png"></p>
 <p>广播注册分为静态和动态注册，静态注册是由PMS（PackageManagerService）来实现的，除了广播其他三大组建都是应用安装时由PMS解析并注册的。<br>这里只分析广播的动态注册，动态注册过程是从ContextWrapper的registerReceiver方法开始的，ContextWrapper并没有实际工作，而是将注册交给了ContextImpl来完成。</p>
       
     </div>
@@ -391,7 +391,7 @@ windowManager.addView(button,params);
         <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识
 比如Service的启动过程和绑定过程.
 </code></pre><h3 id="Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的"><a href="#Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的" class="headerlink" title="Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的."></a>Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.</h3><h2 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h2><p>启动过程流程图</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_service1.png" alt="img"></p>
+<p><img src="https://imuhao.github.io/image/androidart_service1.png" alt="img"></p>
 <p>Service的启动过程从ContextWrapper的startService方法开始,如下所示</p>
 <pre><code>public ComponentName startService(Intent service) {
        return mBase.startService(service);
@@ -460,7 +460,7 @@ windowManager.addView(button,params);
 <p> Activity对于开发者来说最普通不过了,但是你有没有想过当我们看到一个Activity的之后系统内部到底是如何启动一个Activity的呢?比如新Activity对象是何时创建的?Activity的onCreate方法又是在何时被系统回调的呢?</p>
 </blockquote>
 <p>首先来看一下流程图:</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_activity.png" alt="img"></p>
+<p><img src="https://imuhao.github.io/image/androidart_activity.png" alt="img"></p>
 <p>从Activity的startActivity()方法开始分析,有好几个重载方法,他们最终都会调用startActivityFriResult方法,在该方法中会执行Instrumentation的execStartActivity方法</p>
 <pre><code>public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target,
        Intent intent, int requestCode, Bundle options)

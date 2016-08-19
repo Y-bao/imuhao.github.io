@@ -20,9 +20,9 @@ Service的启动过程从ContextWrapper的startServic">
 Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.Service的启动过程启动过程流程图
 
 Service的启动过程从ContextWrapper的startServic">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service1.png">
-<meta property="og:image" content="http://imuhao.qiniudn.com/androidart_service2.png">
-<meta property="og:updated_time" content="2016-08-17T16:54:01.158Z">
+<meta property="og:image" content="https://imuhao.github.io/image/androidart_service1.png">
+<meta property="og:image" content="https://imuhao.github.io/image/androidart_service2.png">
+<meta property="og:updated_time" content="2016-08-19T15:03:48.352Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Service的工作过程">
 <meta name="twitter:description" content="本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识
@@ -30,7 +30,7 @@ Service的启动过程从ContextWrapper的startServic">
 Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.Service的启动过程启动过程流程图
 
 Service的启动过程从ContextWrapper的startServic">
-<meta name="twitter:image" content="http://imuhao.qiniudn.com/androidart_service1.png">
+<meta name="twitter:image" content="https://imuhao.github.io/image/androidart_service1.png">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -210,7 +210,7 @@ Service的启动过程从ContextWrapper的startServic">
         <pre><code>本文将介绍Service的工作过程,通过本文分析,你将会对Service的一些工作原理有更进一步的认识
 比如Service的启动过程和绑定过程.
 </code></pre><h3 id="Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的"><a href="#Service有两种状态-一种是启动状态-主要用于执行后台计算-另一种是绑定状态-主要用于与其他组件进行交互-这两种状态是可以共存的" class="headerlink" title="Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的."></a>Service有两种状态,一种是启动状态,主要用于执行后台计算,另一种是绑定状态,主要用于与其他组件进行交互.这两种状态是可以共存的.</h3><h2 id="Service的启动过程"><a href="#Service的启动过程" class="headerlink" title="Service的启动过程"></a>Service的启动过程</h2><p>启动过程流程图</p>
-<p><img src="http://imuhao.qiniudn.com/androidart_service1.png" alt="img"></p>
+<p><img src="https://imuhao.github.io/image/androidart_service1.png" alt="img"></p>
 <p>Service的启动过程从ContextWrapper的startService方法开始,如下所示</p>
 <pre><code>public ComponentName startService(Intent service) {
        return mBase.startService(service);
@@ -226,7 +226,7 @@ Service的启动过程从ContextWrapper的startServic">
 <li>最后调用Service的onCreate方法并将Service对象存储到ActivityThread中的一个列表中.</li>
 </ol>
 <p>到这里Service的启动过程已经分析完了,下面分析Service的绑定过程.</p>
-<h2 id="Service的绑定过程"><a href="#Service的绑定过程" class="headerlink" title="Service的绑定过程"></a>Service的绑定过程</h2><p>绑定流程图<br><img src="http://imuhao.qiniudn.com/androidart_service2.png" alt="img"><br>和Service启动过程一样,它的绑定过程也是从ContextWrapper开始的,如下所示.</p>
+<h2 id="Service的绑定过程"><a href="#Service的绑定过程" class="headerlink" title="Service的绑定过程"></a>Service的绑定过程</h2><p>绑定流程图<br><img src="https://imuhao.github.io/image/androidart_service2.png" alt="img"><br>和Service启动过程一样,它的绑定过程也是从ContextWrapper开始的,如下所示.</p>
 <pre><code>public boolean bindService(Intent service, ServiceConnection conn,
            int flags) {
        return mBase.bindService(service, conn, flags);
