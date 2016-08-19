@@ -16,7 +16,7 @@
 <meta property="og:description" content="在操作系统中，线程是操作系统调度的最小单元，当系统中存在大量线程时，系统会通过时间片轮转的方式调度每个线程，当进程中频繁的创建和销毁线程的时候应该采用线程池，线程池会缓存一定数量的线程，避免频繁创建和销毁线程带来的系统开销。
 
 主线程和子线程(1)  在Java中默认情况下一个进程只有一个线程，也就是主线程，其他线程都是子线程，也叫工作线程。Android中的主线程主要处理和界面相关的事情，而子">
-<meta property="og:updated_time" content="2016-08-19T16:05:16.316Z">
+<meta property="og:updated_time" content="2016-08-19T16:06:35.163Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android的线程和线程池">
 <meta name="twitter:description" content="在操作系统中，线程是操作系统调度的最小单元，当系统中存在大量线程时，系统会通过时间片轮转的方式调度每个线程，当进程中频繁的创建和销毁线程的时候应该采用线程池，线程池会缓存一定数量的线程，避免频繁创建和销毁线程带来的系统开销。
@@ -295,9 +295,9 @@ TimeUnit.MICROSECONDS;      //微妙
 TimeUnit.NANOSECONDS;       //纳秒
 </code></pre></li>
 <li><p>workQueue ： <code>任务队列</code>，是一个阻塞队列，用来存储等待执行的任务，这个参数的选择也很重要，会对线程池的运行过程产生重大影响，参考BlockingQueue</p>
-<pre><code>ArrayBlockingQueue;
-LinkedBlockingQueue;
-SynchronousQueue;
+<pre><code>ArrayBlockingQueue
+LinkedBlockingQueue
+SynchronousQueue
 </code></pre></li>
 <li><p>threadFactory : <code>线程工厂</code>，如何去创建线程的</p>
 </li>
