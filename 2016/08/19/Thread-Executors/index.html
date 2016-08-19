@@ -16,7 +16,7 @@
 <meta property="og:description" content="在操作系统中，线程是操作系统调度的最小单元，当系统中存在大量线程时，系统会通过时间片轮转的方式调度每个线程，当进程中频繁的创建和销毁线程的时候应该采用线程池，线程池会缓存一定数量的线程，避免频繁创建和销毁线程带来的系统开销。
 
 主线程和子线程(1)  在Java中默认情况下一个进程只有一个线程，也就是主线程，其他线程都是子线程，也叫工作线程。Android中的主线程主要处理和界面相关的事情，而子">
-<meta property="og:updated_time" content="2016-08-19T15:58:25.417Z">
+<meta property="og:updated_time" content="2016-08-19T16:01:15.611Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android的线程和线程池">
 <meta name="twitter:description" content="在操作系统中，线程是操作系统调度的最小单元，当系统中存在大量线程时，系统会通过时间片轮转的方式调度每个线程，当进程中频繁的创建和销毁线程的时候应该采用线程池，线程池会缓存一定数量的线程，避免频繁创建和销毁线程带来的系统开销。
@@ -203,7 +203,7 @@
 </blockquote>
 <h2 id="主线程和子线程"><a href="#主线程和子线程" class="headerlink" title="主线程和子线程"></a>主线程和子线程</h2><p>(1)  在Java中默认情况下一个进程只有一个线程，也就是主线程，其他线程都是子线程，也叫工作线程。Android中的主线程主要处理和界面相关的事情，而子线程则往往用于执行耗时操作。线程的创建和销毁的开销较大，所以如果一个进程要频繁地创建和销毁线程的话，都会采用线程池的方式。</p>
 <p>(2) 在Android中除了Thread，还有HandlerThread、AsyncTask以及IntentService等也都扮演着线程的角色，只是它们具有不同的特性和使用场景。AsyncTask封装了线程池和Handler，它主要是为了方便开发者在子线程中更新UI。HandlerThread是一种具有消息循环的线程，在它的内部可以使用Handler。IntentService是一个服务，它内部采用HandlerThread来执行任务，当任务执行完毕后就会自动退出。因为它是服务的缘故，所以和后台线程相比，它比较不容易被系统杀死。</p>
-<p>(3). 从Android 3.0开始，系统要求网络访问必须在子线程中进行，否则网络访问将会失败并抛出NetworkOnMainThreadException这个异常，这样做是为了避免主线程由于被耗时操作所阻塞从而出现ANR现象。</p>
+<p>(3). 从Android 3.0开始，系统要求网络访问必须在子线程中进行，否则网络访问将会失败并抛出NetworkOnMainThreadException这个异常，这样做是为了避免主线程由于被耗时操作所阻塞从而出现ANR现象。<br><a id="more"></a></p>
 <h2 id="Android中的线程形态"><a href="#Android中的线程形态" class="headerlink" title="Android中的线程形态"></a>Android中的线程形态</h2><h3 id="AsyncTask"><a href="#AsyncTask" class="headerlink" title="AsyncTask"></a>AsyncTask</h3><p>AsyncTask是一个抽象泛型类，它提供了Params、Progress、Result三个泛型参数，如果task确实不需要传递具体的参数，那么都可以设置为Void。下面是它的四个核心方法，其中doInBackground不是在主线程执行的。<br>onPreExecute、doInBackground、onProgressUpdate、onPostResult</p>
 <h4 id="注意事项："><a href="#注意事项：" class="headerlink" title="注意事项："></a>注意事项：</h4><ul>
 <li>AsyncTask必须在主线程中加载</li>
@@ -284,7 +284,7 @@ public ThreadPoolExecutor(int corePoolSize，//核心池的大小
                               RejectedExecutionHandler handler) //异常的捕捉器
 </code></pre><h4 id="构造相关参数解释"><a href="#构造相关参数解释" class="headerlink" title="构造相关参数解释"></a>构造相关参数解释</h4><ul>
 <li>corePoolSize：<code>核心池的大小</code>，这个参数跟后面讲述的线程池的实现原理有非常大的关系。在创建了线程池后，默认情况下，线程池中并没有任何线程，而是等待有任务到来才创建线程去执行任务，除非调用了prestartAllCoreThreads()或者prestartCoreThread()方法，从这2个方法的名字就可以看出，是预创建线程的意思，即在没有任务到来之前就创建corePoolSize个线程或者一个线程。默认情况下，在创建了线程池后，线程池中的线程数为0，当有任务来之后，就会创建一个线程去执行任务，当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到缓存队列当中；</li>
-<li>maximumPoolSize：<code>线程池最大线程数</code>，这个参数也是一个非常重要的参数，它表示在线程池中最多能创建多少个线程；</li>
+<li>maximumPoolSize：<code>’线程池最大线程数</code>，<br>这个参数也是一个非常重要的参数，它表示在线程池中最多能创建多少个线程；</li>
 <li>keepAliveTime：<code>表示线程没有任务执行时最多保持多久时间会终止</code>。默认情况下，只有当线程池中的线程数大于corePoolSize时，keepAliveTime才会起作用，直到线程池中的线程数不大于corePoolSize，即当线程池中的线程数大于corePoolSize时，如果一个线程空闲的时间达到keepAliveTime，则会终止，直到线程池中的线程数不超过corePoolSize。但是如果调用了allowCoreThreadTimeOut(boolean)方法，在线程池中的线程数不大于corePoolSize时，keepAliveTime参数也会起作用，直到线程池中的线程数为0；</li>
 <li><p>unit：参数keepAliveTime的<code>时间单位</code>，有7种取值</p>
 <pre><code>TimeUnit.DAYS;               //天
@@ -380,7 +380,7 @@ ThreadPoolExecutor.CallerRunsPolicy：由调用线程处理该任务
   
   
     <a href="/2016/08/17/Window_WindowManager/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">理解Window和WindowManager</div>
+      <div class="article-nav-title">Window和WindowManager</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
