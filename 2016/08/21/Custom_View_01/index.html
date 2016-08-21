@@ -18,7 +18,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
 
 点击事件的分发过程由三个重要的方法来完成
 dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEb">
-<meta property="og:updated_time" content="2016-08-21T09:58:08.296Z">
+<meta property="og:updated_time" content="2016-08-21T10:11:43.201Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义View系列1 -- View的事件分发机制">
 <meta name="twitter:description" content="Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.
@@ -205,7 +205,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
 <p>Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.</p>
 </blockquote>
 <p>点击事件的分发过程由三个重要的方法来完成</p>
-<h3 id="dispatchTouchEvent-MotionEvent-ev"><a href="#dispatchTouchEvent-MotionEvent-ev" class="headerlink" title="dispatchTouchEvent(MotionEvent ev)"></a>dispatchTouchEvent(MotionEvent ev)</h3><p>事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEbent和下级View的dispatchTouchEvent方法的影响,表示是否消耗当前的事件.</p>
+<h3 id="dispatchTouchEvent-MotionEvent-ev"><a href="#dispatchTouchEvent-MotionEvent-ev" class="headerlink" title="dispatchTouchEvent(MotionEvent ev)"></a>dispatchTouchEvent(MotionEvent ev)</h3><p>事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEbent和下级View的dispatchTouchEvent方法的影响,表示是否消耗当前的事件.<br><a id="more"></a></p>
 <h3 id="onInterceptTouchEvent-MotionEvent-ev"><a href="#onInterceptTouchEvent-MotionEvent-ev" class="headerlink" title="onInterceptTouchEvent(MotionEvent ev)"></a>onInterceptTouchEvent(MotionEvent ev)</h3><p>事件拦截,在上个方法的内部调用,用来判断是否拦截某个事件,如果当前View拦截了某个事件,那么在同一个事件序列中,此方法不会再被调用,返回结果表示是否拦截当前事件</p>
 <h3 id="onTouchEvent-MotionEvent-ev"><a href="#onTouchEvent-MotionEvent-ev" class="headerlink" title="onTouchEvent(MotionEvent ev)"></a>onTouchEvent(MotionEvent ev)</h3><p>事件处理,在dispatchTouchEvent方法中调用,同来处理点击事件,返回结果表示是否消耗当前事件,如果不消耗当前事件,那么在同一个事件序列中,当前View无法再次接收到事件</p>
 <h3 id="ViewGroup的分发过程"><a href="#ViewGroup的分发过程" class="headerlink" title="ViewGroup的分发过程"></a>ViewGroup的分发过程</h3><p>当产生点击事件之后首先会触发他的事件分发方法,如果他的事件拦截方法返回true就表示他要拦截当前事件,接着这个事件就会交给这个ViewGroup处理,即表示他的onTouchEvent方法会被调用.</p>
