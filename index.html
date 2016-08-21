@@ -189,102 +189,7 @@
 <li>可以表示宽和高</li>
 <li>由size和mode组成</li>
 </ul>
-<p>它代表一个32位的int值,高2微代表SpecMode(测量模式),低30位代表SpecSize(某种测量模式下的规格大小).</p>
-<p>可以通过下面方式获取两个值</p>
-<p>获取SpecSize</p>
-<pre><code>int specSize = MeasureSpec.getSize(measureSpec)
-</code></pre><p>获取specMode</p>
-<pre><code>int specMode = MeasureSpec.getMode(measureSpec)
-</code></pre><p>当然也可以通过这两个值生成新的SpecMode</p>
-<pre><code>int measureSpec=MeasureSpec.makeMeasureSpec(size, mode);
-</code></pre><h4 id="SpecMode有三类"><a href="#SpecMode有三类" class="headerlink" title="SpecMode有三类"></a>SpecMode有三类</h4><ol>
-<li>MeasureSpec.EXACTLY </li>
-</ol>
-<p>父容器已经检测出View所需要的精确大小,这个时候View的最终大小就是SpecSize所制定的值.</p>
-<ol>
-<li>MeasureSpec.AT_MOST </li>
-</ol>
-<p>父容器未能检测出View锁需要的精确大小,在该模式下View的测量模式大小不能超过SpecSize</p>
-<ol>
-<li>MeasureSpec.UNSPECIFIED </li>
-</ol>
-<p>父容器不对View的大小做限制</p>
-<p>子View的MeasureSpec由其父容器的MeasureSpec和子View本身的布局参数layoutParams共同决定.</p>
-<p>在此经过测量得出的子View的MeasureSpec是系统给出的一个期望值(参考值)，我们也可摒弃系统的这个测量流程，直接调用setMeasuredDimension( )设置子View的宽和高的测量值。</p>
-<h5 id="在什么情况下View的SpecMode为MeasureSpec-EXACTLY？"><a href="#在什么情况下View的SpecMode为MeasureSpec-EXACTLY？" class="headerlink" title="在什么情况下View的SpecMode为MeasureSpec.EXACTLY？"></a>在什么情况下View的SpecMode为MeasureSpec.EXACTLY？</h5><p>第一种情况:</p>
-<p>子View的LayoutParams的宽(高)采用具体的值(如100px)时，那么说明该子View的大小是非常明确的，此时不管父容器的specMode是什么，系统返回给该子View的specMode总是MeasureSpec.EXACTLY，并且系统返回给该子View的specSize就是子View自己指定的大小(childSize)。</p>
-<p>第二种情况:</p>
-<p>子View的LayoutParams的宽(高)采用match_parent并且父容器的MeasureSpec为MeasureSpec.EXACTLY,这个时候子View的大小就明确的表示要和父容器一样大</p>
-<p>如果父容器MeasureSpec为MeasureSpec.EXACTLY，那么系统返回给该子View的specMode就为 MeasureSpec.EXACTLY和父容器一样；系统返回给该子View的specSize就为该父容器剩余空间的大小(parentLeftSize),即为父容器的剩余大小.</p>
-<h5 id="在哪些具体的情况下子View的SpecMode为MeasureSpec-AT-MOST？"><a href="#在哪些具体的情况下子View的SpecMode为MeasureSpec-AT-MOST？" class="headerlink" title="在哪些具体的情况下子View的SpecMode为MeasureSpec.AT_MOST？"></a>在哪些具体的情况下子View的SpecMode为MeasureSpec.AT_MOST？</h5><p>第一种情况:</p>
-<p>当子View的LayoutParams的宽(高)采用match_parent并且父容器的MeasureSpec为MeasureSpec.AT_MOST时</p>
-<p>系统返回给该子View的specMode就为MeasureSpec.AT_MOST，系统返回给该子View的specSize就为该父容器剩余空间的大小(parentLeftSize)</p>
-<p>第二种情况： </p>
-<p>当子View的LayoutParams的宽(高)采用wrap_content时并且父容器的MeasureSpec为MeasureSpec.EXACTLY时</p>
-<p>系统返回给该子View的specMode就为 MeasureSpec.AT_MOST，系统返回给该子View的specSize就为该父容器剩余空间的大小(parentLeftSize)</p>
-<p>第三种情况： </p>
-<p>当子View的LayoutParams的宽(高)采用wrap_content时并且父容器的MeasureSpec为MeasureSpec.AT_MOST时:系统返回给该子View的specMode就为MeasureSpec.AT_MOST，系统返回给该子View的specSize就为该父容器剩余空间的大小(parentLeftSize)</p>
-<h5 id="measureChildWithMargins-和measureChild-有什么相同点和区别呢？"><a href="#measureChildWithMargins-和measureChild-有什么相同点和区别呢？" class="headerlink" title="measureChildWithMargins( )和measureChild( )有什么相同点和区别呢？"></a>measureChildWithMargins( )和measureChild( )有什么相同点和区别呢？</h5><ol>
-<li>都是用来测量子View的大小</li>
-<li>在调用getChildMeasureSpec( )均要计算父View已占空间</li>
-<li>在measureChild( )计算父View所占空间为mPaddingLeft + mPaddingRight，即父容器左右两侧的padding值之和</li>
-<li>measureChildWithMargins( )计算父View所占空间为mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin+ widthUsed。此处，除了父容器左右两侧的padding值之和还包括了子View左右的margin值之和( lp.leftMargin + lp.rightMargin)，因为这两部分也是不能用来摆放子View的应算作父View已经占用的空间。这点从方法名measureChildWithMargins也可以看出来它是考虑了子View的margin所占空间的</li>
-</ol>
-<h5 id="为什么要设置View在wrap-content时的大小"><a href="#为什么要设置View在wrap-content时的大小" class="headerlink" title="为什么要设置View在wrap_content时的大小?"></a>为什么要设置View在wrap_content时的大小?</h5><p>如果view在布局中使用wrap_content,那么它的specMode是AT_MOST模式,在这种模式下,他的宽高等于SpecSize,这种情况下的SpecSize是parentSize,也就是父容器中可以使用的剩余控件大小,在这种效果下View的宽高就等于父容器当前剩余控件大小.如何解决呢?</p>
-<pre><code>protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-    int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-    int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-    int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-
-    if (widthMode == MeasureSpec.AT_MOST &amp;&amp; heightMode == MeasureSpec.AT_MOST) {
-        setMeasuredDimension(mWidth, mHeight);
-    } else if (widthMode == MeasureSpec.AT_MOST) {
-        setMeasuredDimension(mWidth, heightSize);
-    } else if (heightMode == MeasureSpec.AT_MOST) {
-        setMeasuredDimension(widthMeasureSpec, mHeight);
-    }
-}
-</code></pre><h3 id="ViewGroup的measure过程"><a href="#ViewGroup的measure过程" class="headerlink" title="ViewGroup的measure过程"></a>ViewGroup的measure过程</h3><p>对于ViewGroup来说,除了完成自己的measure过程以外,还会遍历去调用所有子元素的measure方法,这个子元素再递归去执行这个过程</p>
-<h3 id="四种获取View的宽高信息"><a href="#四种获取View的宽高信息" class="headerlink" title="四种获取View的宽高信息"></a>四种获取View的宽高信息</h3><p>1 . 重写Activity的onWindowFocusChanged方法</p>
-<p>在这个方法中View已经初始化完毕,宽高已经准备好了,这个时候获取是没有问题的</p>
-<pre><code>public void onWindowFocusChanged(boolean hasFocus) {
-    super.onWindowFocusChanged(hasFocus);
-    if (hasFocus) {
-        int width = view.getMeasuredWidth();
-        int height = view.getMeasuredHeight();
-    }
-}
-</code></pre><p>2 . View.Post(runnable)</p>
-<p>通过post将一个runnable传递到消息队列的尾部,然后等待Looper调用次runnable的时候View已经初始化完毕.</p>
-<pre><code>protected void onStart() {
-    super.onStart();
-    view.post(new Runnable() {
-        @Override
-        public void run() {
-            int width = view.getMeasuredWidth();
-            int height = view.getMeasuredHeight();
-        }
-    });
-}
-</code></pre><p>关于View.post(runnable)的使用技巧可以看我的另一篇文章</p>
-<p><a href="https://imuhao.github.io/2016/08/14/View-Post/" title="View.post使用细节">https://imuhao.github.io/2016/08/14/View-Post/</a></p>
-<p>3 . ViewTreeObserver</p>
-<p>使用View树监听的众多回调可以完成这个功能</p>
-<pre><code>    final ViewTreeObserver observer = view.getViewTreeObserver();
-    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            int width = view.getMeasuredWidth();
-            int height = view.getMeasuredHeight();
-            observer.removeGlobalOnLayoutListener(this);
-        }
-    });
-}
-</code></pre><p>4 .view.measure(int,int)</p>
-<p>手动对View进程measure来得到View的宽高,原理很简单,就是根据View的measure过程构造MeasureSpec需要知道parentSize,即父容器的剩余空间,因为比较麻烦,也很少使用,在这就不多说了.</p>
-
+<p>它代表一个32位的int值,高2微代表SpecMode(测量模式),低30位代表SpecSize(某种测量模式下的规格大小).<br>
       
     </div>
     
@@ -297,6 +202,10 @@
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/21/Custom_View_02/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
