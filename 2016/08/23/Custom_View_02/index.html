@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>自定义View系列二 -- onMeasure流程的详尽分析 | muhao的程序世界</title>
+  <title>自定义View系列二 -- onMeasure流程的详细分析 | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="大家知道，自定义View有三个重要的步骤：measure，layout，draw。而measure处于该链条的首端，占据着极其重要的地位；在这篇文章中我带大家详细介绍View的measure流程
 
 MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的时候,面试官问我的最后一个问题就是MeasureSpec的原理,当我将原理答出来之后面试官就直接带我去见人事了,所以">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自定义View系列二 -- onMeasure流程的详尽分析">
-<meta property="og:url" content="http://imuhao.github.io/2016/08/21/Custom_View_02/index.html">
+<meta property="og:title" content="自定义View系列二 -- onMeasure流程的详细分析">
+<meta property="og:url" content="http://imuhao.github.io/2016/08/23/Custom_View_02/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
 <meta property="og:description" content="大家知道，自定义View有三个重要的步骤：measure，layout，draw。而measure处于该链条的首端，占据着极其重要的地位；在这篇文章中我带大家详细介绍View的measure流程
 
 MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的时候,面试官问我的最后一个问题就是MeasureSpec的原理,当我将原理答出来之后面试官就直接带我去见人事了,所以">
-<meta property="og:updated_time" content="2016-08-21T12:01:25.422Z">
+<meta property="og:updated_time" content="2016-08-23T15:08:06.273Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="自定义View系列二 -- onMeasure流程的详尽分析">
+<meta name="twitter:title" content="自定义View系列二 -- onMeasure流程的详细分析">
 <meta name="twitter:description" content="大家知道，自定义View有三个重要的步骤：measure，layout，draw。而measure处于该链条的首端，占据着极其重要的地位；在这篇文章中我带大家详细介绍View的measure流程
 
 MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的时候,面试官问我的最后一个问题就是MeasureSpec的原理,当我将原理答出来之后面试官就直接带我去见人事了,所以">
@@ -164,8 +164,8 @@ MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的
       <div class="body-wrap"><article id="post-Custom_View_02" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/21/Custom_View_02/" class="article-date">
-  	<time datetime="2016-08-21T10:24:04.730Z" itemprop="datePublished">2016-08-21</time>
+      <a href="/2016/08/23/Custom_View_02/" class="article-date">
+  	<time datetime="2016-08-23T11:16:26.380Z" itemprop="datePublished">2016-08-23</time>
 </a>
     </div>
   
@@ -178,7 +178,7 @@ MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的
         
   
     <h1 class="article-title" itemprop="name">
-      自定义View系列二 -- onMeasure流程的详尽分析
+      自定义View系列二 -- onMeasure流程的详细分析
     </h1>
   
 
@@ -348,7 +348,7 @@ MeasureSpec说到MeasureSpec还有一个插曲,就是我在这家公司面试的
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Custom_View_02" data-title="自定义View系列二 -- onMeasure流程的详尽分析" data-url="http://imuhao.github.io/2016/08/21/Custom_View_02/"></div>
+	<div class="ds-thread" data-thread-key="Custom_View_02" data-title="自定义View系列二 -- onMeasure流程的详细分析" data-url="http://imuhao.github.io/2016/08/23/Custom_View_02/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">

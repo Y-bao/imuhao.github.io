@@ -4,27 +4,18 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>自定义View系列一 -- View的事件分发机制 | muhao的程序世界</title>
+  <title>Hello World | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.
-
-点击事件的分发过程由三个重要的方法来完成
-dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEb">
+  <meta name="description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自定义View系列一 -- View的事件分发机制">
-<meta property="og:url" content="http://imuhao.github.io/2016/08/21/Custom_View_01/index.html">
+<meta property="og:title" content="Hello World">
+<meta property="og:url" content="http://imuhao.github.io/2016/08/14/hello-world/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
-<meta property="og:description" content="Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.
-
-点击事件的分发过程由三个重要的方法来完成
-dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEb">
-<meta property="og:updated_time" content="2016-08-21T12:01:34.882Z">
+<meta property="og:description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
+<meta property="og:updated_time" content="2016-08-14T17:02:16.418Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="自定义View系列一 -- View的事件分发机制">
-<meta name="twitter:description" content="Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.
-
-点击事件的分发过程由三个重要的方法来完成
-dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEb">
+<meta name="twitter:title" content="Hello World">
+<meta name="twitter:description" content="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.">
   
     <link rel="alternative" href="/atom.xml" title="muhao的程序世界" type="application/atom+xml">
   
@@ -164,11 +155,11 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-Custom_View_01" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/08/21/Custom_View_01/" class="article-date">
-  	<time datetime="2016-08-21T09:19:43.232Z" itemprop="datePublished">2016-08-21</time>
+      <a href="/2016/08/14/hello-world/" class="article-date">
+  	<time datetime="2016-08-14T06:58:36.213Z" itemprop="datePublished">2016-08-14</time>
 </a>
     </div>
   
@@ -181,7 +172,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
         
   
     <h1 class="article-title" itemprop="name">
-      自定义View系列一 -- View的事件分发机制
+      Hello World
     </h1>
   
 
@@ -190,7 +181,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android笔记/">Android笔记</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/点滴记忆/">点滴记忆</a></li></ul>
 	</div>
 
         
@@ -201,27 +192,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>Android的事件分发就是对MotionEvent事件的分发过程,当一个MotionEvent事件产生以后,系统需要把这个事件传递给一个具体的View,这个过程就叫事件分发.</p>
-</blockquote>
-<p>点击事件的分发过程由三个重要的方法来完成</p>
-<h3 id="dispatchTouchEvent-MotionEvent-ev"><a href="#dispatchTouchEvent-MotionEvent-ev" class="headerlink" title="dispatchTouchEvent(MotionEvent ev)"></a>dispatchTouchEvent(MotionEvent ev)</h3><p>事件分发,如果事件能传递给当前的View,那么此方法一定会被调用,返回结果受当前View的onTouchEbent和下级View的dispatchTouchEvent方法的影响,表示是否消耗当前的事件.<br><a id="more"></a></p>
-<h3 id="onInterceptTouchEvent-MotionEvent-ev"><a href="#onInterceptTouchEvent-MotionEvent-ev" class="headerlink" title="onInterceptTouchEvent(MotionEvent ev)"></a>onInterceptTouchEvent(MotionEvent ev)</h3><p>事件拦截,在上个方法的内部调用,用来判断是否拦截某个事件,如果当前View拦截了某个事件,那么在同一个事件序列中,此方法不会再被调用,返回结果表示是否拦截当前事件</p>
-<h3 id="onTouchEvent-MotionEvent-ev"><a href="#onTouchEvent-MotionEvent-ev" class="headerlink" title="onTouchEvent(MotionEvent ev)"></a>onTouchEvent(MotionEvent ev)</h3><p>事件处理,在dispatchTouchEvent方法中调用,同来处理点击事件,返回结果表示是否消耗当前事件,如果不消耗当前事件,那么在同一个事件序列中,当前View无法再次接收到事件</p>
-<h3 id="ViewGroup的分发过程"><a href="#ViewGroup的分发过程" class="headerlink" title="ViewGroup的分发过程"></a>ViewGroup的分发过程</h3><p>当产生点击事件之后首先会触发他的事件分发方法,如果他的事件拦截方法返回true就表示他要拦截当前事件,接着这个事件就会交给这个ViewGroup处理,即表示他的onTouchEvent方法会被调用.</p>
-<p>如果他的事件拦截方法返回false,表示不拦截当前事件,这时这个事件就会传递给它的子元素,接着子元素的事件分发方法会被调用,如此反复直到事件被最终处理.</p>
-<h3 id="View的事件处理过程"><a href="#View的事件处理过程" class="headerlink" title="View的事件处理过程"></a>View的事件处理过程</h3><p>当一个View需要处理事件时,如果给这个View设置了onTouchListener,那么会调用onTouchListsner的onTouch方法,如果该方法的返回值返回false,则当前View的onTouchEvent方法会被调用.</p>
-<p>如果返回false,那么onTouchEvent方法不会调用, onTouch的返回值体现了一种机制 如果我自己能处理该事件我就自己处理并返回true,处理不了再交给onTouchEvent,由此可见onTouch优先级比onTouchEvent要高,而我们平时设置的onClickListsner的onClick方法的优先级最低,处于事件传递的尾端.</p>
-<h3 id="关于事件传递机制的结论"><a href="#关于事件传递机制的结论" class="headerlink" title="关于事件传递机制的结论"></a>关于事件传递机制的结论</h3><ol>
-<li>一个事件从手指触摸屏幕开始,从手指离开平模结束.</li>
-<li>一个事件序列只能被一个View拦截且消费</li>
-<li>某个View一旦决定拦截,那么这个事件都只能由他来处理</li>
-<li>某个View一旦开始处理事件,如果它不小号ACTION_DOWN事件(返回false),那么同一事件序列中的其他事件都不会交给它去处理,并且将事件交给他的父元素去处理</li>
-<li>ViewGroup默认不拦截任何事件</li>
-<li>View没有事件拦截方法</li>
-<li>View的onTouchEvent默认都会消耗事件</li>
-</ol>
-
+        <h3 id="第一次用Hexo搭建博客-折腾了一天终于可以运行起来了"><a href="#第一次用Hexo搭建博客-折腾了一天终于可以运行起来了" class="headerlink" title="第一次用Hexo搭建博客.折腾了一天终于可以运行起来了."></a>第一次用Hexo搭建博客.折腾了一天终于可以运行起来了.</h3>
       
     </div>
     
@@ -230,20 +201,15 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
     
 <nav id="article-nav">
   
-    <a href="/2016/08/23/Custom_View_02/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/08/14/View-Post/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          自定义View系列二 -- onMeasure流程的详细分析
+          View.Post()的使用细节
         
       </div>
     </a>
   
-  
-    <a href="/2016/08/19/Thread-Executors/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android的线程和线程池</div>
-      <strong class="article-nav-caption">></strong>
-    </a>
   
 </nav>
 
@@ -276,7 +242,7 @@ dispatchTouchEvent(MotionEvent ev)事件分发,如果事件能传递给当前的
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Custom_View_01" data-title="自定义View系列一 -- View的事件分发机制" data-url="http://imuhao.github.io/2016/08/21/Custom_View_01/"></div>
+	<div class="ds-thread" data-thread-key="hello-world" data-title="Hello World" data-url="http://imuhao.github.io/2016/08/14/hello-world/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
