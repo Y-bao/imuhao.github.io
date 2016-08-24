@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>自定义View系列三 -- onLayout流程的详细分析 | muhao的程序世界</title>
+  <title>自定义View系列三 -- onLayout和onDraw流程的详细分析 | muhao的程序世界</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="前面说完measure阶段以后，系统确定了View的测量大小，接下来就进入layout阶段，在这个过程中会确定视图的显示位置，即子View在期父容器的位置。
 
@@ -12,7 +12,7 @@
 //l, t, r, b分别表示子View相对于父View的左、上、右、下的坐标
 public void layout(int l, int t, int r, int b) {">
 <meta property="og:type" content="article">
-<meta property="og:title" content="自定义View系列三 -- onLayout流程的详细分析">
+<meta property="og:title" content="自定义View系列三 -- onLayout和onDraw流程的详细分析">
 <meta property="og:url" content="http://imuhao.github.io/2016/08/24/Custom_View_03/index.html">
 <meta property="og:site_name" content="muhao的程序世界">
 <meta property="og:description" content="前面说完measure阶段以后，系统确定了View的测量大小，接下来就进入layout阶段，在这个过程中会确定视图的显示位置，即子View在期父容器的位置。
@@ -20,9 +20,9 @@ public void layout(int l, int t, int r, int b) {">
 首先我们从view的layout()方法开始入手
 //l, t, r, b分别表示子View相对于父View的左、上、右、下的坐标
 public void layout(int l, int t, int r, int b) {">
-<meta property="og:updated_time" content="2016-08-24T00:19:54.745Z">
+<meta property="og:updated_time" content="2016-08-24T00:22:57.331Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="自定义View系列三 -- onLayout流程的详细分析">
+<meta name="twitter:title" content="自定义View系列三 -- onLayout和onDraw流程的详细分析">
 <meta name="twitter:description" content="前面说完measure阶段以后，系统确定了View的测量大小，接下来就进入layout阶段，在这个过程中会确定视图的显示位置，即子View在期父容器的位置。
 
 首先我们从view的layout()方法开始入手
@@ -184,7 +184,7 @@ public void layout(int l, int t, int r, int b) {">
         
   
     <h1 class="article-title" itemprop="name">
-      自定义View系列三 -- onLayout流程的详细分析
+      自定义View系列三 -- onLayout和onDraw流程的详细分析
     </h1>
   
 
@@ -390,7 +390,7 @@ public void layout(int l, int t, int r, int b) {
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="Custom_View_03" data-title="自定义View系列三 -- onLayout流程的详细分析" data-url="http://imuhao.github.io/2016/08/24/Custom_View_03/"></div>
+	<div class="ds-thread" data-thread-key="Custom_View_03" data-title="自定义View系列三 -- onLayout和onDraw流程的详细分析" data-url="http://imuhao.github.io/2016/08/24/Custom_View_03/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
