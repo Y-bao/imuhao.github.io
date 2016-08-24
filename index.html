@@ -218,108 +218,7 @@ public void layout(int l, int t, int r, int b) {
     }
 </code></pre><p>在该方法中主要实现</p>
 <p>1 确定该View在其父View中的位置</p>
-<p>在该处调用setFrame()方法，在该方法中把l，t， r， b分别与之前的mLeft，mTop，mRight，mBottom一一作比较，假若其中任意一个值发生了变化，那么就判定该View的位置发生了变化 </p>
-<p>2 若View的位置发生了变化就会调用onLayout方法</p>
-<p>这个方法是一个空方法，为什么呢？因为layout方法用于确定子View的大小和位置，而只有ViewGroup才会有子View，接下来我们来看ViewGroup中的onLayout是怎么实现的。</p>
-<pre><code>protected abstract void onLayout(boolean changed,int l, int t, int r, int b);
-</code></pre><p>在ViewGroup中的onLayout方法是抽象的，意味着什么呢？意味着他的子类必须实现这个方法，我们以LinearLayout为例看看ViewGroup对于onLayout()方法的实现。</p>
-<pre><code>protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (mOrientation == VERTICAL) {
-            layoutVertical(l, t, r, b);
-        } else {
-            layoutHorizontal(l, t, r, b);
-        }
-    }
-</code></pre><p>首先会判断是水平还是垂直布局，在此，就选择layoutVertical()继续往下看。</p>
-<pre><code>void layoutVertical(int left, int top, int right, int bottom) {
-    final int paddingLeft = mPaddingLeft;
-    int childTop;
-    int childLeft;
-    final int width = right - left;
-    int childRight = width - mPaddingRight;
-
-    int childSpace = width - paddingLeft - mPaddingRight;
-
-    final int count = getVirtualChildCount();
-
-    final int majorGravity = mGravity &amp; Gravity.VERTICAL_GRAVITY_MASK;
-    final int minorGravity = mGravity &amp; Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
-
-    switch (majorGravity) {
-          case Gravity.BOTTOM:
-              childTop = mPaddingTop + bottom - top - mTotalLength;
-               break;
-
-          case Gravity.CENTER_VERTICAL:
-              childTop =mPaddingTop+(bottom-top-mTotalLength) / 2;
-              break;
-
-          case Gravity.TOP:
-          default:
-              childTop = mPaddingTop;
-              break;
-    }
-
-    for (int i = 0; i &lt; count; i++) {
-        final View child = getVirtualChildAt(i);
-        if (child == null) {
-            childTop += measureNullChild(i);
-        } else if (child.getVisibility() != GONE) {
-            final int childWidth = child.getMeasuredWidth();
-            final int childHeight = child.getMeasuredHeight();
-
-            final LinearLayout.LayoutParams lp =
-                        (LinearLayout.LayoutParams) child.getLayoutParams();
-
-            int gravity = lp.gravity;
-            if (gravity &lt; 0) {
-                gravity = minorGravity;
-            }
-            final int layoutDirection = getLayoutDirection();
-            final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
-            switch (absoluteGravity &amp; Gravity.HORIZONTAL_GRAVITY_MASK) {
-                case Gravity.CENTER_HORIZONTAL:
-                    childLeft = paddingLeft + ((childSpace - childWidth) / 2)
-                                + lp.leftMargin - lp.rightMargin;
-                    break;
-
-                case Gravity.RIGHT:
-                    childLeft = childRight - childWidth - lp.rightMargin;
-                    break;
-
-                case Gravity.LEFT:
-                default:
-                    childLeft = paddingLeft + lp.leftMargin;
-                    break;
-            }
-
-            if (hasDividerBeforeChildAt(i)) {
-                childTop += mDividerHeight;
-            }
-
-            childTop += lp.topMargin;
-            setChildFrame(child,childLeft,childTop+ getLocationOffset(child),
-                        childWidth, childHeight);
-            childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
-
-            i += getChildrenSkipCount(child, i);
-        }
-    }
-}
-</code></pre><p>可以看到在该方法中首先会便利所有子元素并调用setChidFrame方法来为子元素指定对应的位置，其中childTop会逐渐增大，意味着后面的子元素会被放在靠下的位置，这正好符合垂直线性布局的特征，至于setChidFrame就是调用了子View的layout方法，这样父元素在layout方法中完成自己的定位之后，就调用onLayout的方法去调用子元素的layout方法，子元素的layout方法来确定自己的位置，这样一层一层的传递下去，就完成了view树的layout过程</p>
-<h4 id="View的getMeasuredWidth和getWidth有什么区别？"><a href="#View的getMeasuredWidth和getWidth有什么区别？" class="headerlink" title="View的getMeasuredWidth和getWidth有什么区别？"></a>View的getMeasuredWidth和getWidth有什么区别？</h4><p>默认实现中是相等的，测量宽高形成于View的measure过程，最终宽高形成于layout过程</p>
-<h2 id="draw过程"><a href="#draw过程" class="headerlink" title="draw过程"></a>draw过程</h2><blockquote>
-<p>Draw的过程就比较简单了，它的作用是将View绘制到屏幕上面。</p>
-</blockquote>
-<p>绘制的过程遵循如下几步</p>
-<ol>
-<li>绘制背景</li>
-<li>绘制自己</li>
-<li>绘制chidren</li>
-<li>绘制装饰</li>
-</ol>
-<p>View的绘制过程的传递是通过dispatchDraw来实现的，该方法会遍历调用所有子元素的draw方法，如此draw事件就一层层的传递下去。</p>
-
+<p>在该处调用setFrame()方法，在该方法中把l，t， r， b分别与之前的mLeft，mTop，mRight，mBottom一一作比较，假若其中任意一个值发生了变化，那么就判定该View的位置发生了变化<br>
       
     </div>
     
@@ -332,6 +231,10 @@ public void layout(int l, int t, int r, int b) {
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2016/08/24/Custom_View_03/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>

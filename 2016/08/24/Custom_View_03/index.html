@@ -20,7 +20,7 @@ public void layout(int l, int t, int r, int b) {">
 首先我们从view的layout()方法开始入手
 //l, t, r, b分别表示子View相对于父View的左、上、右、下的坐标
 public void layout(int l, int t, int r, int b) {">
-<meta property="og:updated_time" content="2016-08-24T00:22:57.331Z">
+<meta property="og:updated_time" content="2016-08-24T00:23:34.001Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自定义View系列三 -- onLayout和onDraw流程的详细分析">
 <meta name="twitter:description" content="前面说完measure阶段以后，系统确定了View的测量大小，接下来就进入layout阶段，在这个过程中会确定视图的显示位置，即子View在期父容器的位置。
@@ -243,8 +243,7 @@ public void layout(int l, int t, int r, int b) {
     }
 </code></pre><p>在该方法中主要实现</p>
 <p>1 确定该View在其父View中的位置</p>
-<p>在该处调用setFrame()方法，在该方法中把l，t， r， b分别与之前的mLeft，mTop，mRight，mBottom一一作比较，假若其中任意一个值发生了变化，那么就判定该View的位置发生了变化 </p>
-<p>2 若View的位置发生了变化就会调用onLayout方法</p>
+<p>在该处调用setFrame()方法，在该方法中把l，t， r， b分别与之前的mLeft，mTop，mRight，mBottom一一作比较，假若其中任意一个值发生了变化，那么就判定该View的位置发生了变化<br><a id="more"></a><br>2 若View的位置发生了变化就会调用onLayout方法</p>
 <p>这个方法是一个空方法，为什么呢？因为layout方法用于确定子View的大小和位置，而只有ViewGroup才会有子View，接下来我们来看ViewGroup中的onLayout是怎么实现的。</p>
 <pre><code>protected abstract void onLayout(boolean changed,int l, int t, int r, int b);
 </code></pre><p>在ViewGroup中的onLayout方法是抽象的，意味着什么呢？意味着他的子类必须实现这个方法，我们以LinearLayout为例看看ViewGroup对于onLayout()方法的实现。</p>
